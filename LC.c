@@ -774,6 +774,128 @@ int searchInsert(int* nums, int numsSize, int target) {
 	return ans;
 }
 
+//2021_2_17
+//383. 赎金信
+bool canConstruct(char * ransomNote, char * magazine){
+
+	// char count[26]={0};//错误
+	int count[26] = { 0 };
+	int i = 0;
+	char ch = 0;
+
+	for (i = 0; (ch = magazine[i]) != '\0'; i++)
+		count[ch - 'a']++;
+	for (i = 0; (ch = ransomNote[i]) != '\0'; i++){
+		if (count[ch - 'a'] == 0)
+			return false;
+		else
+			count[ch - 'a']--;
+	}
+	return true;
+}
+
+//58. 最后一个单词的长度
+int lengthOfLastWord(char * s){
+	int len = strlen(s);
+	int count = 0;
+
+	for (int i = len - 1; i >= 0; i--){
+		if (s[i] != ' ')
+			count++;
+		if (s[i] == ' ' && 0 != count)
+			break;
+	}
+	return count;
+}
+
+//925. 长按键入
+// bool isLongPressedName(char * name, char * typed){
+//     int i=0, j=0;
+//     while(j<strlen(typed)){
+//         if(name[i] == typed[j])
+//             i++,j++;
+//         else j++;
+//     }
+//     if(j>=strlen(typed) || i!=strlen(name)-1)
+//         return false;
+//     return true;
+// }
+
+bool isLongPressedName(char * name, char * typed){
+	int n = strlen(name), m = strlen(typed);
+	int i = 0, j = 0;
+	while (j<m){
+
+		if (i<n && name[i] == typed[j])
+			i++, j++;
+		else if (j>0 && typed[j] == typed[j - 1])
+			j++;
+		else
+			return false;
+	}
+	return i == n;
+}
+
+//977. 有序数组的平方
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+
+// int cmp(const void* _a, const void* _b){
+//     int a = *(int*)_a, b = *(int*)_b;
+//     return a-b;
+// }
+
+// int* sortedSquares(int* nums, int numsSize, int* returnSize){
+//     *returnSize =numsSize;
+//     int* nums1 =(int*)malloc(sizeof(int)*numsSize);
+//     for(int i=0; i<numsSize; i++){
+//         nums1[i]=(nums[i] * nums[i]);
+//     }
+//     qsort(nums1, numsSize,sizeof(int),cmp);
+//     return nums1;
+// }
+
+int* sortedSquares(int* nums, int numsSize, int* returnSize){
+	*returnSize = numsSize;
+	int* numsnew = (int*)malloc(sizeof(int)* numsSize);//zz
+	for (int i = 0, j = numsSize - 1, pos = numsSize - 1; i <= j;){
+
+		if (nums[i] * nums[i] > nums[j] * nums[j]){
+			numsnew[pos--] = nums[i] * nums[i];
+			i++;
+		}
+		else{
+			numsnew[pos--] = nums[j] * nums[j];
+			j--;
+		}
+	}
+	return numsnew;
+}
+
+//917. 仅仅反转字母
+char *reverseOnlyLetters(char *s)
+{
+	if (s == NULL)
+		return NULL;
+	int i = 0, j = strlen(s) - 1;
+	while (i < j){
+
+		while (i < j && !isalpha(s[i]))
+			i++;
+
+		while (i < j && !isalpha(s[j]))
+			j--;
+
+		if (i < j){
+			char tmp = s[i];
+			s[i] = s[j];
+			s[j] = tmp;
+			i++, j--;
+		}
+	}
+	return s;
+}
 
 int main()
 {

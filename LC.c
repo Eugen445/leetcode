@@ -897,6 +897,109 @@ char *reverseOnlyLetters(char *s)
 	return s;
 }
 
+
+
+
+
+//2021_2_18
+//66. 加一
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+int* plusOne(int* digits, int digitsSize, int* returnSize){
+
+	int count = 0;
+
+	for (int i = digitsSize - 1; i >= 0; i--){
+		if (digits[i] == 9){
+			digits[i] = 0;
+			count++;
+		}
+		else{
+			//digits[i]+=1;
+			digits[i]++;
+			*returnSize = digitsSize;
+			return digits;
+		}
+	}
+	int *res = (int*)malloc(sizeof(int)*(digitsSize + 1));
+	memset(res, 0, sizeof(int)*(digitsSize + 1));
+
+	if (count == digitsSize){
+		res[0] = 1;
+	}
+	*returnSize = digitsSize + 1;
+	return res;
+}
+
+//414. 第三大的数
+int thirdMax(int* nums, int numsSize){
+	int i;
+	int first, second, third;
+	int min = nums[0];
+	for (i = 0; i<numsSize; i++){
+		if (nums[i]<min)
+			min = nums[i];
+	}
+
+	first = second = third = min;
+
+	for (i = 0; i<numsSize; i++){
+
+		if (nums[i] > first){
+			third = second;
+			second = first;
+			first = nums[i];
+		}
+		else if (nums[i] > second && nums[i] != first){
+			third = second;
+			second = nums[i];
+		}
+		else if (nums[i] > third && nums[i] != second && nums[i] != first){
+			third = nums[i];
+		}
+	}
+
+	if (first == second || second == third)
+		return first;
+	return third;
+}
+
+//67. 二进制求和
+void reverse(char *s)
+{
+	int n = strlen(s);
+	for (int i = 0; i<n / 2; i++){
+		//int tmp = s[i];
+		char tmp = s[i];
+		s[i] = s[n - 1 - i];
+		s[n - 1 - i] = tmp;
+	}
+}
+char * addBinary(char * a, char * b){
+	reverse(a);
+	reverse(b);
+
+	int len_a = strlen(a), len_b = strlen(b);
+	int n = fmax(len_a, len_b);
+	char* ans = (char*)malloc(sizeof(char)*(n + 2));//进位和'\0'
+	int carry = 0, len = 0;
+	for (int i = 0; i<n; i++){
+		carry += i < len_a ? (a[i] == '1') : 0;
+		carry += i < len_b ? (b[i] == '1') : 0;
+		ans[len++] = carry % 2 + '0';
+		carry /= 2;
+	}
+
+	if (carry)
+		ans[len++] = '1';
+	ans[len] = '\0';
+
+	reverse(ans);
+
+	return ans;
+}
+
 int main()
 {
 	EXIT_SUCCESS;

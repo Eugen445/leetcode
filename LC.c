@@ -1000,6 +1000,184 @@ char * addBinary(char * a, char * b){
 	return ans;
 }
 
+//2021_2_23
+//8. 字符串转换整数 (atoi)
+int myAtoi(char * s){
+
+	while (*s == ' ')
+		s++;
+
+	int flag = 1;
+	if (*s == '+')
+		s++;
+	else if (*s == '-'){
+		s++;
+		flag = -1;
+	}
+
+	int ret = 0;
+	int _max = INT_MAX / 10; //ret的值不能超过这个值
+	while (*s <= '9' && *s >= '0'){
+
+		int tmp = *s - '0';
+		if (ret < _max || (ret == _max && tmp < 8)){
+
+			ret = ret * 10 + tmp;
+			*s++;
+		}
+		else
+			return (flag == 1 ? INT_MAX : INT_MIN);
+	}
+	return flag * ret;
+}
+
+//34. 在排序数组中查找元素的第一个和最后一个位置
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+int* searchRange(int* nums, int numsSize, int target, int* returnSize){
+
+	int i, j;
+	int flag = 1;
+	*returnSize = 2;
+	int *s = (int*)malloc(sizeof(int)* 2);
+	for (i = 0; i <numsSize; i++){
+		if (nums[i] == target){
+			s[0] = i;
+			break;
+		}
+	}
+	for (j = numsSize - 1; j >= 0; j--){
+		if (nums[j] == target){ //1个也可以
+			s[1] = j;
+			flag = 0;
+			break;
+		}
+	}
+	if (flag == 1){
+		s[0] = -1, s[1] = -1;
+	}
+	return s;
+}
+
+//125. 验证回文串
+// bool isPalindrome(char * s){
+
+//     int sz =strlen(s);
+//     int left = 0;
+//     int right = sz-1;
+
+//     while(left <= right){
+//         if(isalnum(s[left])){//isalnum 判断是否为数字或字母
+//             left++;
+//         continue; //不满足条件则跳过这次循环；
+//         }
+//         if(isalnum(s[right])){
+//             right--;
+//         continue;
+//         }
+
+//         if(tolower(s[left]) != tolower(s[right]))
+//             return false;
+//     }
+//     return true;
+// }//错误，超时 ，原因:left,right可能不会变化
+
+bool isPalindrome(char * s){
+
+	int n = strlen(s) - 1;
+
+	if (s == NULL)
+		return false;
+	if (strlen(s) == 0)
+		return true;
+
+	for (int i = 0; i <= n;){
+		if (!isalnum(s[i])){//isalnum 判断是否为数字或字母
+			i++;
+			continue; //不满足条件则跳过这次循环；
+		}
+		if (!isalnum(s[n])){
+			n--;
+			continue;
+		}
+
+		if (tolower(s[i]) != tolower(s[n])) //tolower 字母字符统一变成小写字母
+			return false;
+		//更新条件
+		i++, n--;
+	}
+	return true;
+}
+
+//443. 压缩字符串
+int compress(char* chars, int charsSize){
+
+int cur = 0;
+
+for (int i = 0, j = 0; i < charsSize; j = i){
+
+	while (i < charsSize && chars[i] == chars[j])
+		i++;
+	chars[cur++] = chars[j];
+	if (i - j == 1)
+		continue;
+
+	char s[1000];
+	sprintf(s, "%d", i - j);
+
+	for (int z = 0; z<strlen(s); z++)
+		chars[cur++] = s[z];
+}
+return cur;
+}
+
+//581. 最短无序连续子数组
+// int capare(const void *a, const void *b){
+//     return *(int*)a-*(int*)b;}
+// int findUnsortedSubarray(int* nums, int numsSize){
+//     int begin = 0, end = 0;
+//     int *numscpy = (int*)malloc(numsSize*sizeof(int));
+//     //memcpy(numscpy, nums, numsSize);
+//     memcpy(numscpy, nums, sizeof(int)*numsSize);
+//     qsort(numscpy,numsSize,sizeof(int),capare);
+//     for(int i =0; i < numsSize; i++){
+//         if(numscpy[i] != nums[i]){
+//             begin = i;
+//             break;
+//         }
+//     }
+//     for(int j =numsSize-1; j>=0; j--){
+//         if(numscpy[j] != nums[j]){
+//             end = j;
+//             break;
+//         }
+//     }
+//     if(begin == end)
+//         return 0;
+//     return end-begin+1;
+// }
+
+int findUnsortedSubarray(int* nums, int numsSize){
+	int start = 0;
+	//int end = 0;//错误
+	int end = -1;
+	int max = nums[0];
+	int min = nums[numsSize - 1];
+	for (int i = 0; i < numsSize; i++){
+		if (nums[i]<max)
+			end = i;
+		else
+			max = nums[i];
+
+		if (nums[numsSize - 1 - i]>min)
+			start = numsSize - 1 - i;
+		else
+			min = nums[numsSize - 1 - i];
+	}
+	return end - start + 1;
+}
+
 int main()
 {
 	EXIT_SUCCESS;

@@ -1244,6 +1244,26 @@ int** subsets(int* nums, int numsSize, int* returnSize, int** returnColumnSizes)
 	return ans;
 }
 
+//199¶þ²æÊ÷µÄÓÒÊÓÍ¼
+void travel(struct TreeNode* root, int depth, int* returnSize, int* res){
+	if (root == NULL)
+		return;
+	if (depth > *returnSize){
+		res[*returnSize] = root->val;
+		*returnSize = depth;
+	}
+	travel(root->right, depth + 1, returnSize, res);
+	travel(root->left, depth + 1, returnSize, res);
+}
+
+
+int* rightSideView(struct TreeNode* root, int* returnSize){
+	*returnSize = 0;
+	int *res = (int*)malloc(sizeof(int)* 1000);
+	travel(root, 1, returnSize, res);
+	return res;
+}
+
 int main()
 {
 	EXIT_SUCCESS;

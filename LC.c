@@ -1178,6 +1178,72 @@ int findUnsortedSubarray(int* nums, int numsSize){
 	return end - start + 1;
 }
 
+
+
+//2021_2_24
+//150. 逆波兰表达式求值
+int chartoint(char *str)
+{
+	int i = str[0] == '-' ? 1 : 0, num = 0;
+	while (str[i])
+		num = num * 10 + str[i++] - '0';
+	return str[0] == '-' ? -num : num;
+}
+
+int evalRPN(char ** tokens, int tokensSize){
+	int i = 1, stack_index = 0;
+	int stack[(tokensSize + 1) / 2];
+	stack[0] = chartoint(tokens[0]);
+	while (i<tokensSize){
+		switch (tokens[i++][0]){
+		case'+':
+			stack[--stack_index] = stack[stack_index - 1] + stack[stack_index];
+			break;
+		case'*':
+			stack[--stack_index] = stack[stack_index - 1] * stack[stack_index];
+			break;
+		case'/':
+			stack[--stack_index] = stack[stack_index - 1] / stack[stack_index];
+			break;
+		case'-': //判定是否是符号
+			if (tokens[i - 1][1] == 0){//
+				stack[--stack_index] = stack[stack_index - 1] - stack[stack_index];
+				break;
+			}
+		default:
+			stack[++stack_index] = chartoint(tokens[i - 1]);
+		}
+	}
+	return stack[0];
+}
+
+//78. 子集
+/**
+* Return an array of arrays of size *returnSize.
+* The sizes of the arrays are returned as *returnColumnSizes array.
+* Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+*/
+int** subsets(int* nums, int numsSize, int* returnSize, int** returnColumnSizes){
+	// int **ans = (int*)malloc(sizeof(int) * (1 << numsSize));
+	int **ans = malloc(sizeof(int*)* (1 << numsSize)); //
+	*returnColumnSizes = malloc(sizeof(int)* (1 << numsSize));
+	*returnSize = 1 << numsSize;
+	int t[numsSize];
+	for (int mask = 0; mask< (1 << numsSize); mask++){
+		int tSize = 0;
+		for (int i = 0; i < numsSize; i++){
+			if (mask & (1 << i)){
+				t[tSize++] = nums[i];
+			}
+		}
+		int *tmp = malloc(sizeof(int)*tSize);
+		memcpy(tmp, t, sizeof(int)* tSize);
+		(*returnColumnSizes)[mask] = tSize;//??
+		ans[mask] = tmp;
+	}
+	return ans;
+}
+
 int main()
 {
 	EXIT_SUCCESS;

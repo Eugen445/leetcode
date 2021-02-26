@@ -1264,6 +1264,7 @@ int* rightSideView(struct TreeNode* root, int* returnSize){
 	return res;
 }
 
+
 int main()
 {
 	EXIT_SUCCESS;

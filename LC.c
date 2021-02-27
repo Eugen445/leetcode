@@ -1,3 +1,4 @@
+//#define _CRT_SECURE_
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -16,7 +17,6 @@
 	*
 };
 */
-
 
 int _maxdepth(struct TreeNode* root)
 { 

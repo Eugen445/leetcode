@@ -1,4 +1,4 @@
-//#define _CRT_SECURE_NO_WARNINGS
+//#define _CRT_SECURE_
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -1265,7 +1265,342 @@ int* rightSideView(struct TreeNode* root, int* returnSize){
 	return res;
 }
 
+//2021_2_27
+//1688. 比赛中的配对次数
+int numberOfMatches(int n){
+	int sum = 0;
+	while (n > 1){
+		if ((n % 2) == 0){
+			sum += n / 2;
+			n /= 2;
+		}
+		else{
+			sum += (n - 1) / 2;
+			n = (n - 1) / 2 + 1;
+		}
+	}
+	return sum;
+}
 
+int numberOfMatches(int n){
+	int sum = 0;
+	while (n > 1){
+		sum += n / 2;
+		n = (n + 1) / 2;
+	}
+	return sum;
+}
+
+int numberOfMatches(int n){
+	return n - 1;
+}
+
+//53. 最大子序和
+int maxSubArray(int* nums, int numsSize){
+	int pre = 0, max = nums[0];
+	for (int i = 0; i < numsSize; i++){
+		pre = fmax(pre + nums[i], nums[i]);
+		max = fmax(pre, max);
+	}
+	return max;
+}
+
+//392. 判断子序列
+bool isSubsequence(char * s, char * t){
+	int s_len = strlen(s);
+	int t_len = strlen(t);
+
+	int i = 0, j = 0;
+	while (i < s_len && j < t_len){
+		if (s[i] == t[j])
+			i++;
+		j++;
+	}
+	// if(i == s_len)
+	//     return true;
+	// return false;
+	return i == s_len;
+}
+
+//2021_2_28
+//896. 单调数列
+// bool isMonotonic(int* A, int ASize){
+
+//     if(ASize == 0)
+//         return true;
+
+//     int add = 1, sub =1;
+//     for(int i = 0; i < ASize-1; i++){
+
+//         if(A[i] <= A[i+1])
+//             add++;
+//         if(A[i] >= A[i+1])
+//             sub++;
+//     }
+
+//     if(add == ASize || sub == ASize)
+//         return true;
+//     return false;
+// }
+
+// bool isMonotonic(int* A, int ASize){
+//     bool inc = true;
+//     bool dec = true;
+
+//     for(int i = 0; i < ASize -1; i++){
+//         if(A[i] < A[i+1])
+//             dec = false;
+//         if(A[i] > A[i+1])
+//             inc = false;
+//     }
+//     return inc || dec;
+// }
+bool isMonotonic(int* A, int ASize){
+	int i = 0;
+	if (A[0] > A[ASize - 1]){
+		for (i = 1; i < ASize; i++)
+		if (A[i] > A[i - 1]) return false;
+	}
+	else if (A[0] < A[ASize - 1]){
+		for (i = 1; i < ASize; i++)
+		if (A[i] < A[i - 1]) return false;
+	}
+	else{
+		for (i = 1; i<ASize; i++)
+		if (A[i] != A[i - 1]) return false;
+	}
+	return true;
+}
+
+//110. 平衡二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+
+int _maxdepth(struct TreeNode* root){
+	if (root == NULL)
+		return 0;
+	int left = _maxdepth(root->left);
+	int right = _maxdepth(root->right);
+
+	return (left > right ? left : right) + 1;
+}
+
+bool isBalanced(struct TreeNode* root){
+	if (root == NULL)
+		return true;
+	int l_depth = _maxdepth(root->left);
+	int r_depth = _maxdepth(root->right);
+
+	return abs(l_depth - r_depth) < 2 && isBalanced(root->left) && isBalanced(root->right);
+}
+
+//897. 递增顺序查找树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+
+#define MAX 1000
+
+struct TreeNode* increasingBST(struct TreeNode* root){
+	struct TreeNode* ret = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+	struct TreeNode* p = ret;
+	struct TreeNode* stack[MAX];
+
+	int top = -1;
+	while (root != NULL || top != -1){
+
+		while (root != NULL){
+			stack[++top] = root;
+			root = root->left;
+		}
+		if (top != -1){
+
+			root = stack[top--];
+			p->right = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+			p = p->right;
+			p->val = root->val;
+			p->left = NULL;
+			p->right = NULL;
+			root = root->right;
+		}
+	}
+	return ret->right;
+}
+
+//剑指 Offer 54. 二叉搜索树的第k大节点
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+#define MAX 10000
+
+int* inorder(struct TreeNode* root, int *returnsize)
+{
+	//struct TreeNode* stack[MAX];
+	struct TreeNode **stack = (struct TreeNode**)malloc(sizeof(struct TreeNode*) * 1000);
+	int *res = (int*)malloc(sizeof(int)*MAX);
+	int top = -1;
+	*returnsize = 0;
+	struct TreeNode *p = root;
+	while (p != NULL || top != -1){
+		if (p != NULL){
+			stack[++top] = p;
+			p = p->left;
+		}
+		else{
+			p = stack[top--];
+			res[(*returnsize)++] = p->val;
+			p = p->right;
+		}
+	}
+	return res;
+}
+
+int kthLargest(struct TreeNode* root, int k){
+	int size = 0;
+	int *tmp = inorder(root, &size);
+	return tmp[size - k];
+}
+
+int target_index;
+struct TreeNode *targetNode;
+
+void kthLargestCore(struct TreeNode*node)
+{
+	if (node == NULL)
+	{
+		return;
+	}
+	kthLargestCore(node->right);
+	// if(target_index == 0)//找到后，剩下的就停止
+	// {
+	//     return;
+	// }//对效率是否有影响
+	target_index--;
+	if (target_index == 0)
+	{
+		targetNode = node;
+		return;
+	}
+	kthLargestCore(node->left);
+}
+
+int kthLargest(struct TreeNode* root, int k){
+	target_index = k;
+	kthLargestCore(root);
+	return targetNode->val;
+}
+
+//112. 路径总和
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+
+
+bool hasPathSum(struct TreeNode* root, int targetSum){
+	if (root == NULL)
+		return false;
+	if (root->left == NULL && root->right == NULL)
+		return targetSum == root->val;
+	return hasPathSum(root->left, targetSum - root->val) || hasPathSum(root->right, targetSum - root->val);
+}
+
+//1022. 从根到叶的二进制数之和
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+//int num = 0;//这样写的话，无法再次利用，num的值没有刷新
+int num;
+void SRL(struct TreeNode* root, int sum)
+{
+	if (root == NULL)
+		return;
+
+	sum = (sum << 1) + root->val;
+	if (root->left == NULL && root->right == NULL){
+		num += sum;
+	}
+	SRL(root->left, sum);
+	SRL(root->right, sum);
+
+}
+
+int sumRootToLeaf(struct TreeNode* root){
+	int sum = 0;
+	num = 0;
+	SRL(root, sum);
+	return num;
+}
+
+//617. 合并二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+
+
+struct TreeNode* mergeTrees(struct TreeNode* root1, struct TreeNode* root2){
+	if (root1 == NULL)
+		return root2;
+	if (root2 == NULL)
+		return root1;
+
+	struct TreeNode *merge = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+	merge->val = root1->val + root2->val;
+	merge->left = mergeTrees(root1->left, root2->left);
+	merge->right = mergeTrees(root1->right, root2->right);
+
+	return merge;
+}
+
+//剑指 Offer 55 - I. 二叉树的深度
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     struct TreeNode *left;
+*     struct TreeNode *right;
+* };
+*/
+
+
+int maxDepth(struct TreeNode* root){
+	if (root == NULL)
+		return 0;
+	int L_Depth = maxDepth(root->left);
+	int R_Depth = maxDepth(root->right);
+
+	return (L_Depth > R_Depth ? L_Depth : R_Depth) + 1;
+}
 
 
 int main()

@@ -1602,6 +1602,268 @@ int maxDepth(struct TreeNode* root){
 	return (L_Depth > R_Depth ? L_Depth : R_Depth) + 1;
 }
 
+//2021_3_1
+//303. 区域和检索 - 数组不可变
+typedef struct {
+	int *sum;
+} NumArray;
+
+
+NumArray* numArrayCreate(int* nums, int numsSize) {
+	NumArray *ret = malloc(sizeof(NumArray));
+	ret->sum = malloc(sizeof(NumArray)*(numsSize + 1));
+	ret->sum[0] = 0;
+	for (int i = 0; i < numsSize; i++){
+		ret->sum[i + 1] = ret->sum[i] + nums[i];
+	}
+	return ret;
+
+}
+
+int numArraySumRange(NumArray* obj, int i, int j) {
+	return obj->sum[j + 1] - obj->sum[i];
+}
+
+void numArrayFree(NumArray* obj) {
+	free(obj);//free(obj->sum);两者有何异同？
+}
+
+/**
+* Your NumArray struct will be instantiated and called as such:
+* NumArray* obj = numArrayCreate(nums, numsSize);
+* int param_1 = numArraySumRange(obj, i, j);
+
+* numArrayFree(obj);
+*/
+
+//867. 转置矩阵
+/**
+* Return an array of arrays of size *returnSize.
+* The sizes of the arrays are returned as *returnColumnSizes array.
+* Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+*/
+int** transpose(int** matrix, int matrixSize, int* matrixColSize, int* returnSize, int** returnColumnSizes){
+	int row = matrixColSize[0];
+	int col = matrixSize;
+	int **tmp = (int**)malloc(sizeof(int*)* row); //int*类型
+	*returnSize = row; //记录数组元素的个数
+	*returnColumnSizes = malloc(sizeof(int)*row);
+	for (int i = 0; i < row; i++){
+		tmp[i] = malloc(sizeof(int)*col);
+		(*returnColumnSizes)[i] = col;//记录数组元素中元素的个数
+	}
+	for (int i = 0; i< row; i++){
+		for (int j = 0; j < col; j++){
+			tmp[i][j] = matrix[j][i];
+		}
+	}
+	return tmp;
+}
+
+//面试题 17.10. 主要元素
+int majorityElement(int* nums, int numsSize){
+	int res = nums[0], count = 1;
+	for (int i = 1; i < numsSize; i++){
+		if (nums[i] == res){
+			count++;
+			continue;
+		}
+		if (--count == 0){
+			count = 1;
+			res = nums[i];
+		}
+	}
+	if (numsSize <= 2){
+		return count == numsSize ? res : -1;
+	}
+	// if(count >= (numsSize+1)/2)
+	//     return res;
+	if (count > numsSize / 2)
+		retunr res;
+
+	count = 0;
+	for (int i = 0; i < numsSize; i++){
+		if (res == nums[i])
+			count++;
+	}
+
+	if (count >= (numsSize + 1) / 2)
+		return res;
+	return -1;
+}
+
+//977. 有序数组的平方
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+// int cmpare(const void *_a, const void *_b){
+//     int a = *(int*)_a, b = *(int*)_b;
+//     return a-b;
+// }
+// int* sortedSquares(int* nums, int numsSize, int* returnSize){
+
+//     *returnSize = numsSize;
+//     for(int i = 0; i < numsSize; i++)
+//         nums[i] = nums[i] * nums[i];
+//     qsort(nums, numsSize, sizeof(int), cmpare);
+//     return nums;//新数组不清楚是什么意思？新创一个数组的话：改变原来的数组
+// }
+
+int* sortedSquares(int* nums, int numsSize, int* returnSize){
+	*returnSize = numsSize;
+	int *numsNew = (int*)malloc(sizeof(int)*numsSize);
+	//for(int i=0,j=numsSize-1,pos=numsSize-1;i<j;){//[-4,-1,0,3,10]中0的计算会被遗漏//奇偶都不行
+	for (int i = 0, j = numsSize - 1, pos = numsSize - 1; i <= j;){
+		if (nums[i] * nums[i] > nums[j] * nums[j]){
+			numsNew[pos--] = nums[i] * nums[i];
+			i++;
+		}
+		else{
+			numsNew[pos--] = nums[j] * nums[j];
+			j--;
+		}
+	}
+	return numsNew;
+}
+
+
+// int* sortedSquares(int* nums, int numsSize, int* returnSize){
+//     *returnSize = numsSize;
+//     for(int i = 0; i < numsSize; i++)
+//         nums[i] = nums[i] * nums[i];
+//     int tmp = nums[0];
+//     for(int i = 0; i < numsSize; i++){
+//         if(tmp > nums[i]){
+//             nums[0] = nums[i];
+//             nums[i] = tmp;
+//             break;
+//         }
+//     }
+//     return nums;
+// }//不要运行//题目要求不能有局部递减存在这种方法不适合这里
+
+//1185. 一周中的第几天
+char * dayOfTheWeek(int day, int month, int year){
+	int flag = 0, sum = 0;;
+	int dif[][12] =
+	{
+		{ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
+		{ 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+	};
+	// for(int i = 1971 ;i < year; i++){
+	//     if((i%4 == 0 && i%100 !=0) || (i%400 == 0))
+	//         sum+=2;//错了很多次了，else不写的话，if判定成功还是要在sum+=1一次
+	//     sum+=1;
+	// }
+	for (int i = 1971; i < year; i++){
+		if ((i % 4 == 0 && i % 100 != 0) || (i % 400 == 0))
+			sum += 2;
+		else
+			sum += 1;
+	}
+
+
+	if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
+		flag = 1;
+
+	for (int i = 0; i <month - 1; i++)
+		sum += dif[flag][i];
+
+	sum += day;
+	sum--;//
+
+	int data = (5 + (sum % 7)) % 7;
+	switch (data){
+	case 0:return "Sunday";
+	case 1:return "Monday";
+	case 2:return "Tuesday";
+	case 3:return "Wednesday";
+	case 4:return "Thursday";
+	case 5:return "Friday";
+	case 6:return "Saturday";
+	default:
+		return 0;
+	}
+
+//628. 三个数的最大乘积
+	// int cmpare(int *a, int *b){
+	//     return *a-*b;
+	// }
+	// int maximumProduct(int* nums, int numsSize){
+	//     qsort(nums, numsSize, sizeof(int), cmpare);
+	//     return fmax(nums[0]*nums[1]*nums[numsSize-1],nums[numsSize-3]*nums[numsSize-2]*nums[numsSize-1]);
+	// }
+
+	int maximumProduct(int* nums, int numsSize){
+		int min1 = INT_MAX, min2 = INT_MAX;
+		int max1 = INT_MIN, max2 = INT_MIN, max3 = INT_MIN;
+
+		int tmp = 0;
+		for (int i = 0; i < numsSize; i++){
+			tmp = nums[i];
+			if (tmp > max1){
+				max3 = max2;
+				max2 = max1;
+				max1 = tmp;
+			}
+			else if (tmp > max2){
+				max3 = max2;
+				max2 = tmp;
+			}
+			else if (tmp > max3){
+				max3 = tmp;
+			}
+
+			if (tmp < min1){
+				min2 = min1;
+				min1 = tmp;
+			}
+			else if (tmp < min2)
+				min2 = tmp;
+		}
+		return fmax(min1*min2*max1, max1*max2*max3);
+	}
+
+//190. 颠倒二进制位
+//uint32_t reverseBits(uint32_t n) {
+
+	uint32_t ans = 0;
+	for (int i = 0; i < 32; i++){
+		ans = (ans << 1) + (1 & n);
+		n = n >> 1;
+	}
+	return ans;
+}
+
+//268. 丢失的数字
+//// int cmp(const void*_a, const void*_b){
+//     int a = *(int*)_a, b = *(int*)_b;
+//     return a - b;
+// }
+// int missingNumber(int* nums, int numsSize){
+//     qsort(nums,numsSize,sizeof(int),cmp);
+//     for(int i = 0; i < numsSize; i++){
+//         if(nums[i] != i)
+//             return i;
+//     }
+//     return numsSize;
+// }29.37%,5.82%
+
+// int missingNumber(int* nums, int numsSize){
+//     int res = numsSize;
+//     for(int i = 0; i < numsSize; i++){
+//         res^=nums[i]^i;
+//     }
+//     return res;
+// }
+
+// int missingNumber(int* nums, int numsSize){
+//     int sum = numsSize;
+//     for(int i = 0; i < numsSize; i++){
+//         sum+=i-nums[i];
+//     }
+//     return sum;
+// }
 
 int main()
 {

@@ -1865,6 +1865,466 @@ char * dayOfTheWeek(int day, int month, int year){
 //     return sum;
 // }
 
+//2021_3_2
+//989. 数组形式的整数加法
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+// int* addToArrayForm(int* A, int ASize, int K, int* returnSize){
+//     int *res = (int*)malloc(sizeof(int)*fmax(100,ASize+1));
+//     *returnSize = 0;
+//     int sum = 0;
+//     for(int i = ASize - 1; i >= 0; --i){
+
+//         if(K > 0){
+//         sum = A[i] + K%10;
+//         K/=10;
+//         if(sum > 9){
+//             K++;
+//             sum-=10;
+//             }
+//         res[(*returnSize)++] = sum;
+//         }
+//         else
+//             res[(*returnSize)++] =A[i];
+//     }
+//     for(;K>0;K/=10)
+//         res[(*returnSize)++] = K%10;
+//     for(int i=0;i<(*returnSize)/2;i++){
+//         int tmp=res[i];
+//         res[i]=res[(*returnSize)-1-i];
+//         res[(*returnSize)-1-i]=tmp;
+//     }
+//     return res;
+// }
+int* addToArrayForm(int* A, int ASize, int K, int* returnSize){
+	int *res = (int*)malloc(sizeof(int)*fmax(100, ASize + 1));
+	*returnSize = 0;
+	for (int i = ASize - 1; i >= 0 || K>0; i--, K /= 10){
+		if (i >= 0)
+			K += A[i];
+		res[(*returnSize)++] = K % 10;
+	}
+	int tmp;
+	for (int i = 0; i < (*returnSize) / 2; i++){
+		tmp = res[i];
+		res[i] = res[(*returnSize) - 1 - i];
+		res[(*returnSize) - 1 - i] = tmp;
+	}
+	return res;
+}
+
+//304. 二维区域和检索 - 矩阵不可变
+typedef struct {
+	int **sum;
+	int sumSize;
+} NumMatrix;
+
+
+NumMatrix* numMatrixCreate(int** matrix, int matrixSize, int* matrixColSize) {
+	NumMatrix *ret = malloc(sizeof(NumMatrix));
+	ret->sum = malloc(sizeof(int*)*matrixSize);
+	ret->sumSize = matrixSize;
+	for (int i = 0; i < ret->sumSize; i++){
+		ret->sum[i] = malloc(sizeof(int)*(matrixColSize[i] + 1));
+		ret->sum[i][0] = 0;
+		for (int j = 0; j < matrixColSize[i]; j++)
+			ret->sum[i][j + 1] = ret->sum[i][j] + matrix[i][j];
+	}
+	return ret;
+}
+
+int numMatrixSumRegion(NumMatrix* obj, int row1, int col1, int row2, int col2) {
+	int sum = 0;
+	for (int i = row1; i <= row2; i++)
+		sum += obj->sum[i][col2 + 1] - obj->sum[i][col1];
+	return sum;
+}
+
+void numMatrixFree(NumMatrix* obj) {
+	//free(obj);
+	for (int i = 0; i < obj->sumSize; i++)
+		free(obj->sum[i]);
+}
+
+/**
+* Your NumMatrix struct will be instantiated and called as such:
+* NumMatrix* obj = numMatrixCreate(matrix, matrixSize, matrixColSize);
+* int param_1 = numMatrixSumRegion(obj, row1, col1, row2, col2);
+
+* numMatrixFree(obj);
+*/
+
+//剑指 Offer 57. 和为s的两个数字
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+int* twoSum(int* nums, int numsSize, int target, int* returnSize){
+	*returnSize = 2;
+	int *ret = (int*)malloc(sizeof(int)*(*returnSize));
+	int left = 0;
+	int right = numsSize - 1;
+	while (left < right){
+		if (nums[left] + nums[right] == target){
+			ret[0] = nums[left];
+			ret[1] = nums[right];
+			return ret;
+		}
+		else if (nums[left] + nums[right] > target)
+			right--;
+		else  left++;
+	}
+	return NULL;
+}
+
+//剑指 Offer 53 - II. 0～n-1中缺失的数字
+// int missingNumber(int* nums, int numsSize){
+//     for(int i = 0; i < numsSize; i++){
+//         if(nums[i] != i)
+//             return i;
+//     }
+//     return numsSize;
+// }
+
+// int missingNumber(int* nums, int numsSize){
+//     for(int i = 0; i < numsSize-1; i++){
+//         if(nums[i+1] -nums[i] > 1)
+//             return i+1;
+//     }
+//     if(nums[0] == 0){
+//     return numsSize;
+//     }
+//     return 0;
+// 
+
+int missingNumber(int* nums, int numsSize){
+	int left = 0, right = numsSize - 1;
+	int mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		if (nums[mid] > mid)
+			right = mid - 1;
+		else left = mid + 1;
+	}
+	return left;
+}
+
+//面试题 10.05. 稀疏数组搜索
+int findString(char** words, int wordsSize, char* s){
+	for (int i = 0; i < wordsSize; i++){
+		if (!strcmp(words[i], s))
+			return i;
+	}
+	return -1;
+}
+
+//350. 两个数组的交集 II
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+// int cmp(const void*_a,const void*_b){
+//     int a = *(int*)_a, b = *(int*)_b;
+//     return a - b;
+// }[-2147483648,1,2,3]
+//  [1,-2147483648,-2147483648] //越界了
+int cmp(const void*_a, const void*_b){
+	int a = *(int*)_a, b = *(int*)_b;
+	return a == b ? 0 : a > b ? 1 : -1;//计算可能导致计算出范围
+}
+int* intersect(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize){
+	qsort(nums1, nums1Size, sizeof(int), cmp);
+	qsort(nums2, nums2Size, sizeof(int), cmp);
+
+	int retSize = nums1Size > nums2Size ? nums2Size : nums1Size;
+	int *ret = (int*)malloc(sizeof(int)*retSize);
+	*returnSize = 0;
+	for (int index1 = 0, index2 = 0; index1 < nums1Size && index2 < nums2Size;){
+		if (nums1[index1] > nums2[index2]){
+			index2++;
+		}
+		else if (nums1[index1] < nums2[index2]){
+			index1++;
+		}
+		else{
+			ret[(*returnSize)++] = nums1[index1];
+			index1++, index2++;
+		}
+	}
+	return ret;
+}
+
+//69. x 的平方根
+// int mySqrt(int x){
+//     int y = 0;
+//     if(x == 1)
+//         return 1;
+//     if(x == 0)
+//         return 0;
+//     for(y = 0; y < x; y++){
+//         if(y*y < x && (y+1)*(y+1)>x )
+//             break;
+//         if(y*y == x)
+//             break;
+//     }
+//     return y;
+// }//垃圾
+
+
+// int mySqrt(int x){
+//     int l = 0 ,h = x, mid;
+//     while(l<=h){
+//         mid = l+(h-l)/2;
+//         if((long long)mid*mid == x)
+//             return mid;
+//         else if ((long long)mid*mid < x)
+//             l = mid + 1;
+//         else 
+//             h = mid - 1;
+//     } 
+//     return h;
+// }
+
+// int mySqrt(int x){
+//     int L = 1 ,R = x/2 + 1;
+//     int mid;
+//     while(L <= R){
+//         mid = L + (R-L)/2;
+//         if(mid > x/mid){
+//             R = mid - 1;
+//         }
+//         else if(mid  < x/mid){
+//             L = mid + 1;
+//         }
+//         else return mid;
+//     }
+//     return R;
+// }
+int mySqrt(int x){
+	if (x == 0)
+		return 0;
+	if (x == 1)
+		return 1;
+	int L = 1, R = x / 2 + 1;
+	int mid;
+	while (L <= R){
+		mid = L + (R - L) / 2;
+		if (mid > x / mid){
+			R = mid - 1;
+		}
+		else if (mid  < x / mid){
+			L = mid + 1;
+		}
+		else return mid;
+	}
+	return R;
+}
+
+//剑指 Offer 11. 旋转数组的最小数字
+// int cmp(const void*_a, const void*_b){
+//     int a = *(int*)_a, b = *(int*)_b;
+//     return a == b ? 0 : a > b ? 1 : -1;
+// }
+
+// int minArray(int* numbers, int numbersSize){
+//     qsort(numbers, numbersSize,sizeof(int),cmp);
+//     return numbers[0];
+// }
+
+int minArray(int* numbers, int numbersSize){
+	int left = 0, right = numbersSize - 1;
+	int mid;
+	while (left < right){
+		mid = (left >> 1) + (right >> 1);
+		if (numbers[mid] > numbers[right])
+			left = mid + 1;
+		else if (numbers[mid] < numbers[left]){
+			right = mid;
+		}
+		else
+			right--;
+	}
+	return numbers[right];
+}
+
+//167. 两数之和 II - 输入有序数组/**
+*Note: The returned array must be malloced, assume caller calls free().
+* /
+int* twoSum(int* numbers, int numbersSize, int target, int* returnSize){
+	*returnSize = 2;
+	int *ret = (int*)malloc(sizeof(int)*(*returnSize));
+	int left = 0, right = numbersSize - 1;
+	while (left <= right){
+		if (numbers[left] + numbers[right] > target)
+			right--;
+		else if (numbers[left] + numbers[right] < target)
+			left++;
+		else break;
+	}
+	ret[0] = left + 1;
+	ret[1] = right + 1;
+	return ret;
+}
+
+//441. 排列硬币
+// int arrangeCoins(int n){
+//     int res = 0;
+//     for(int i = 1; i<=n; i++){
+//         res++;
+//         n-=i;
+//     }
+//     return res;
+// }
+
+// int arrangeCoins(int n){
+//     long sum = 0;
+//     int i = 0;
+//     while(sum<=n) sum+=++i;
+//     return i-1;
+// }
+
+int arrangeCoins(int n){
+	int left = 1, right = n;
+	long sum = 0;
+	//int mid;//？？
+	long mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		sum = mid*(mid + 1) / 2;
+		if (sum > n) right = mid - 1;
+		else if (sum < n) left = mid + 1;
+		else return mid;
+	}
+	return right;
+}
+
+//744. 寻找比目标字母大的最小字母
+// char nextGreatestLetter(char* letters, int lettersSize, char target){
+//     int count = 0;
+//     int i;
+//     for(i = 0; i < lettersSize; i++){
+//         if((letters[i] - 'a') > (target - 'a'))
+//             break;
+//         count++;
+//     }
+//     if(count == lettersSize)
+//         return  letters[0];
+//     return letters[i];
+// }
+char nextGreatestLetter(char* letters, int lettersSize, char target){
+	int left = 0, right = lettersSize - 1;
+	if (letters[right] <= target)
+		return letters[0];
+
+	int mid;
+	while (left < right){
+		mid = (left >> 1) + (right >> 1);
+		if (letters[mid] > target)
+			right = mid;
+		else if (letters[mid] <= target)
+			left = mid + 1;
+	}
+	return letters[right];
+}
+
+//852. 山脉数组的峰顶索引
+// int peakIndexInMountainArray(int* arr, int arrSize){
+//     int left = 0, right = arrSize-1;
+//     int mid;
+//     while(left <= right){
+//         mid = left + (right -left)/2;
+//         if(arr[mid] > arr[mid+1] && arr[mid] > arr[mid-1])
+//             return mid;
+//         else if(arr[mid] < arr[mid+1])
+//             left = mid + 1;
+//         else right = mid - 1;
+//     }
+//     return -1;
+// }
+
+int peakIndexInMountainArray(int* arr, int arrSize){
+	int left = 0, right = arrSize - 1;
+	int mid;
+	while (left <right){
+		mid = left + (right - left) / 2;
+		if (arr[mid] > arr[mid + 1] && arr[mid] > arr[mid - 1])
+			return mid;
+		else if (arr[mid] < arr[mid + 1])
+			left = mid + 1;
+		else right = mid - 1;
+	}
+	return right;
+}
+
+//1351. 统计有序矩阵中的负数
+// int countNegatives(int** grid, int gridSize, int* gridColSize){
+//     int count = 0;
+//     int i , j;
+//     for(i =0; i < gridSize; i++){
+//         for(j = 0; j < gridColSize[i]; j++){
+//             if(grid[i][j] < 0)
+//                 count++;
+//         }
+//     }
+//     return count;
+// }1.0
+
+// int countNegatives(int** grid, int gridSize, int* gridColSize){
+//     int count = 0;
+//     int i , j;
+//     for(i =0; i < gridSize; i++){
+//         for(j = gridColSize[i]-1; j >= 0; j--){
+//             if(grid[i][j] < 0)
+//                 count++;
+//             else   
+//                 break;
+//         }
+//     }
+//     return count;
+// }2.0
+
+int countNegatives(int** grid, int gridSize, int* gridColSize){
+
+	int i, j, mid, sum = 0;
+	for (i = 0; i < gridSize; i++){
+		int left = 0, right = gridColSize[i];
+		while (left < right){
+			mid = left + (right - left) / 2;
+			if (grid[i][mid] >= 0){
+				left = mid + 1;
+			}
+			else
+				right = mid;
+		}
+		sum += gridColSize[i] - right;
+	}
+	return sum;
+}
+
+//374. 猜数字大小
+/**
+* Forward declaration of guess API.
+* @param  num   your guess
+* @return 	     -1 if num is lower than the guess number
+*			      1 if num is higher than the guess number
+*               otherwise return 0
+* int guess(int num);
+*/
+
+int guessNumber(int n){
+	int left = 1, right = n;
+	int mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		if (guess(mid)<0)
+			right = mid - 1;
+		else if (guess(mid) == 0)
+			return mid;
+		else
+			left = mid + 1;
+	}
+	return right;
+}
+
 int main()
 {
 	EXIT_SUCCESS;

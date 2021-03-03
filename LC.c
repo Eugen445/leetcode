@@ -2325,6 +2325,378 @@ int guessNumber(int n){
 	return right;
 }
 
+//2021_3_3
+//338. 比特位计数
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+// int* countBits(int num, int* returnSize){
+//     int *sum = (int*)malloc(sizeof(int)*(num+1));
+//     *returnSize = 0;
+//     for(int i = 0; i <= num; i++){
+//         int count = 0;
+//         int tmp = i;
+//         while(tmp!=0){
+//             if(tmp & 1 == 1)
+//                 count++;
+//             tmp=tmp>>1;
+//         }
+//         sum[(*returnSize)++] = count;
+//     }
+//     return sum;
+// }
+
+// int countOnes(int x){
+//     int count = 0;
+//     while(x > 0){
+//         x = x & (x - 1);
+//         count++;
+//     }
+//     return count;
+// }
+
+// int* countBits(int num, int* returnSize){
+//     int *sum = (int*)malloc(sizeof(int)*(num + 1));
+//     *returnSize = num + 1;
+//     for(int i = 0; i <= num; i++){
+//         sum[i] = countOnes(i);
+//     }
+//     return sum;
+// }
+
+// int* countBits(int num, int* returnSize){
+//     int *sum = (int*)malloc(sizeof(int)*(num + 1));
+//     *returnSize = num + 1;
+//     sum[0] = 0;
+//     int highbt = 0;
+//     for(int i = 1; i <= num; i++){
+//         //if(i & (i-1) == 0)
+//         if((i & (i-1)) == 0)
+//             highbt = i;
+//         sum[i] = sum[i - highbt] + 1;
+//     }
+//     return sum;
+// }
+
+// int* countBits(int num, int* returnSize){
+//     int *sum = (int*)malloc(sizeof(int)*(num+1));
+//     *returnSize = num + 1;
+//     sum[0] = 0;
+//     int lowbt = 0;
+//     for(int i = 1; i <= num; i++){
+//         sum[i] = sum[i>>1]+(i&1);
+//     }
+//     return sum;
+// }
+
+int* countBits(int num, int* returnSize){
+	int *sum = (int*)malloc(sizeof(int)*(num + 1));
+	*returnSize = num + 1;
+	sum[0] = 0;
+	for (int i = 1; i <= num; i++){
+		sum[i] = sum[i &(i - 1)] + 1;
+	}
+	return sum;
+}
+
+//349. 两个数组的交集
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+int cmp(const void*_a, const void*_b){
+	int a = *(int*)_a, b = *(int*)_b;
+	return a == b ? 0 : a > b ? 1 : -1;
+}
+int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize){
+	qsort(nums1, nums1Size, sizeof(int), cmp);
+	qsort(nums2, nums2Size, sizeof(int), cmp);
+	int index1 = 0, index2 = 0;
+	int *sum = (int*)malloc(sizeof(int)*(nums1Size + nums2Size));
+	*returnSize = 0;
+	while (index1 < nums1Size && index2 < nums2Size){
+		int num1 = nums1[index1], num2 = nums2[index2];
+		if (num1 == num2){
+			if (!(*returnSize) || num1 != sum[(*returnSize) - 1]){
+				sum[(*returnSize)++] = num1;
+				//index1++,index2++;
+			}
+			index1++, index2++;
+		}
+		else if (num1 < num2)
+			index1++;
+		else index2++;
+	}
+	return sum;
+}
+
+//367. 有效的完全平方数
+bool isPerfectSquare(int num){
+	long x = 0;//int x 为何会溢出 //Char 35:运行时错误：有符号整数溢出：46341*46341不能在类型“int”[solution.c]中表示
+	while (x <= (num / 2 + 1)){
+		if (x*x == num)
+			return true;
+		else if (x*x < num && (x + 1)*(x + 1) > num)
+			break;
+		else if (x*x < num)
+			x++;
+	}
+	return false;
+}
+
+//278. 第一个错误的版本
+// The API isBadVersion is defined for you.
+// bool isBadVersion(int version);
+
+int firstBadVersion(int n) {
+	int left = 0, right = n;
+	while (left < right){
+		int mid = (left >> 1) + (right >> 1);
+		if (isBadVersion(mid) == true)
+			right = mid;
+		else if (isBadVersion(mid) == false)
+			left = mid + 1;
+	}
+	return left;
+}
+
+//704. 二分查找
+int search(int* nums, int numsSize, int target){
+	int left = 0, right = numsSize - 1;
+	while (left <= right){
+		int mid = left + (right - left) / 2;
+		if (nums[mid] < target)
+			left = mid + 1;
+		else if (nums[mid] > target)
+			right = mid - 1;
+		else
+			return mid;
+	}
+	return -1;
+}
+
+//剑指 Offer 53 - I. 在排序数组中查找数字 I
+int searchleft(int* nums, int numsSize, int target){
+	int left = 0, right = numsSize - 1;
+	int mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		if (nums[mid] >= target)
+			right = mid - 1;
+		else
+			left = mid + 1;
+	}
+	return left;
+}
+
+int searchright(int* nums, int numsSize, int target){
+	int left = 0, right = numsSize - 1;
+	int mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		if (nums[mid] <= target)
+			left = mid + 1;
+		else
+			right = mid - 1;
+	}
+	return right;
+}
+
+int search(int* nums, int numsSize, int target){
+	if (numsSize == 0)
+		return 0;
+	int left = searchleft(nums, numsSize, target);
+	if (left < 0)
+		return 0;
+	int right = searchright(nums, numsSize, target);
+	return right - left + 1;
+}
+
+//74. 搜索二维矩阵
+//// bool searchMatrix(int** matrix, int matrixSize, int* matrixColSize, int target){
+//     for(int i = 0; i < matrixSize; i++){
+//         if(matrix[i][(*matrixColSize)] > target){
+//             int left = 0, right = (*matrixColSize) - 1;
+//             while(left <= right){
+//                 int mid = left + (right - left)/2;
+//                 if(matrix[i][mid] > target)
+//                     right = mid - 1;
+//                 else if(matrix[i][mid] < target)
+//                     left = mid + 1;
+//                 else  return true;
+//             }
+//         }
+//     }
+//     return false;
+// }
+// bool searchMatrix(int** matrix, int matrixSize, int* matrixColSize, int target){
+//     int left = 0, right = matrixSize*(*matrixColSize) - 1;
+//     int mid, row, col;
+//     while(left <= right){
+//         mid = left + (right - left)/2;
+//         row = mid / *matrixColSize;
+//         col = mid % *matrixColSize;
+//         if(matrix[row][col] < target)
+//             left = mid + 1;
+//         else if(matrix[row][col] > target)
+//             right = mid - 1;
+//         else return true;
+//     }
+//     return false;
+// }
+
+bool searchMatrix(int** matrix, int matrixSize, int* matrixColSize, int target){
+	int left = 0, right = matrixSize - 1, mid_row, mid;
+	bool refresh = false;
+	while (left <= right){
+		mid_row = left + (right - left) / 2;
+		if (matrix[mid_row][0] > target){
+			right = mid_row - 1;
+			refresh = true;
+		}
+		if (matrix[mid_row][*matrixColSize - 1] < target){
+			left = mid_row + 1;
+			refresh = true;
+		}
+		if (!refresh){
+			left = 0, right = *matrixColSize - 1;
+			while (left <= right){
+				mid = left + (right - left) / 2;
+				if (matrix[mid_row][mid] > target)
+					right = mid - 1;
+				else if (matrix[mid_row][mid] < target)
+					left = mid + 1;
+				else return true;
+			}
+			break;
+		}
+		else refresh = false;
+	}
+	return false;
+}
+
+//275. H 指数 II
+int hIndex(int* citations, int citationsSize){
+	int left = 0, right = citationsSize, mid;
+	while (left < right){
+		mid = (left + right + 1) / 2;
+		if (citations[citationsSize - mid] >= mid)
+			left = mid;
+		else
+			right = mid - 1;
+	}
+	return left;
+}
+
+//441. 排列硬币
+// int arrangeCoins(int n){
+//     int res = 0;
+//     for(int i = 1; i<=n; i++){
+//         res++;
+//         n-=i;
+//     }
+//     return res;
+// }
+
+// int arrangeCoins(int n){
+//     long sum = 0;
+//     int i = 0;
+//     while(sum<=n) sum+=++i;
+//     return i-1;
+// }
+
+int arrangeCoins(int n){
+	int left = 1, right = n;
+	long sum = 0;
+	//int mid;//？？
+	int mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		sum = mid*(mid + 1) / 2;
+		if (sum > n) right = mid - 1;
+		else if (sum < n) left = mid + 1;
+		else return mid;
+	}
+	return right;
+}
+
+//540. 有序数组中的单一元素
+// int singleNonDuplicate(int* nums, int numsSize){
+//     int res = 0;
+//     for(int i = 0; i < numsSize; i++)
+//         res^=nums[i];
+//     return res;
+// }O(n);
+
+int singleNonDuplicate(int* nums, int numsSize){
+	if (numsSize == 1)
+		return nums[0];
+	int left = 0, right = numsSize - 1, mid;
+	while (left <= right){
+		mid = left + (right - left) / 2;
+		if (mid == 0 && nums[mid] != nums[mid + 1])
+			return nums[mid];
+		else if (mid == numsSize - 1 && nums[mid] != nums[mid - 1])
+			return nums[mid];
+		else if (nums[mid] != nums[mid + 1] && nums[mid] != nums[mid - 1])
+			return nums[mid];
+
+		if (mid % 2 != 0){
+			if (nums[mid] == nums[mid - 1])
+				left = mid + 1;
+			else right = mid - 1;
+		}
+		if (mid % 2 == 0){
+			if (nums[mid] == nums[mid + 1])
+				left = mid + 1;
+			else right = mid - 1;
+		}
+	}
+	return -1;
+}
+
+//378. 有序矩阵中第 K 小的元素
+// int cmp(const void*_a, const void*_b){
+//     int a = *(int*)_a, b = *(int*)_b;
+//     return a == b ? 0 : a > b ? 1 : -1;
+// }
+
+// int kthSmallest(int** matrix, int matrixSize, int* matrixColSize, int k){
+//     int *dst = (int*)malloc(sizeof(int)*(matrixSize*(*matrixColSize)));
+//     int returnSize = 0;
+//     for(int i = 0 ; i < matrixSize; i++){
+//         for(int j = 0; j < (*matrixColSize); j++){
+//            dst[returnSize++] = matrix[i][j];
+//         }
+//     }
+//     qsort(dst,returnSize,sizeof(int),cmp);
+//     return dst[k-1];
+// }
+bool check(int** matrix, int mid, int k, int n){
+	int i = n - 1;
+	int j = 0;
+	int num = 0;
+	while (i >= 0 && j<n){
+		if (matrix[i][j] <= mid){
+			num += i + 1;
+			j++;
+		}
+		else i--;
+	}
+	return num >= k;
+}
+
+int kthSmallest(int** matrix, int matrixSize, int* matrixColSize, int k){
+	int left = matrix[0][0], right = matrix[matrixSize - 1][matrixSize - 1];
+	while (left < right){
+		int mid = left + (right - left) / 2;
+		if (check(matrix, mid, k, matrixSize)){
+			right = mid;
+		}
+		else  left = mid + 1;
+	}
+	return left;
+}
+
 int main()
 {
 	EXIT_SUCCESS;

@@ -2697,6 +2697,197 @@ int kthSmallest(int** matrix, int matrixSize, int* matrixColSize, int k){
 	return left;
 }
 
+//354. 俄罗斯套娃信封问题
+int cmp(const int**a, const int**b){
+	return (*a)[0] == (*b)[0] ? (*b)[1] - (*a)[1] : (*a)[0] - (*b)[0];
+}
+
+int maxEnvelopes(int** envelopes, int envelopesSize, int* envelopesColSize){
+	if (envelopesSize == 0)
+		return 0;
+	qsort(envelopes, envelopesSize, sizeof(int*), cmp);
+	int i, n = envelopesSize;
+	int f[n];
+	for (i = 0; i < n; i++)
+		f[i] = 1;
+	int ret = 1;
+	for (i = 1; i < n; i++){
+		for (int j = 0; j < i; j++){
+			if (envelopes[j][1] < envelopes[i][1])
+				f[i] = fmax(f[i], f[j] + 1);
+		}
+		ret = fmax(ret, f[i]);
+	}
+	return ret;
+}
+
+//1365. 有多少小于当前数字的数字
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+// int* smallerNumbersThanCurrent(int* nums, int numsSize, int* returnSize){
+//     //int count[101] = {0};
+//     int count[101];
+//     memset(count,0,sizeof(count));
+//     int i;
+//     for(i = 0; i < numsSize; i++)
+//         count[nums[i]]++;
+//     for(i = 1; i <= 100; i++)
+//         count[i]+=count[i-1];
+
+//     for(i = 0; i < numsSize; i++){
+//         nums[i] = nums[i] == 0 ? 0 : count[nums[i]-1];
+//     }
+//     *returnSize = numsSize;
+//     return nums;
+// }哈希
+
+// int* smallerNumbersThanCurrent(int* nums, int numsSize, int* returnSize){
+//     int *news = (int*)malloc(sizeof(int)*numsSize);
+//     for(int i = 0; i < numsSize; i++){
+//         int count = 0;
+//         for(int j = 0; j <numsSize; j++){
+//             if(nums[j] < nums[i])
+//                 count++ ;
+//         }
+//         news[i] = count;
+//     }
+//     *returnSize = numsSize;
+//     return news;
+// }暴力破解
+
+int cmp(const int*a, const int *b){
+	return *a - *b;
+}
+
+int* smallerNumbersThanCurrent(int* nums, int numsSize, int* returnSize){
+	qsort(nums, numsSize, sizeof(int), cmp);
+	int *news = (int*)malloc(sizeof(int)*numsSize);
+	news[0] = 0;
+	for (int i = 1; i < numsSize; i++){
+		int j = i - 1;
+		while (nums[i] == nums[j] && j >= 0)
+			j--;
+		news[i] = j + 1;
+	}
+	return news;
+}
+
+//463. 岛屿的周长
+// const int dx[4] = { -1,  0, 0, 1};
+// const int dy[4] = {  0, -1, 1, 0};
+
+// int islandPerimeter(int** grid, int gridSize, int* gridColSize){
+//     int count = 0;
+//     for(int i = 0; i < gridSize; i++){
+//         for(int j = 0; j < gridColSize[0]; j++){
+//             if(grid[i][j]){
+//                 for(int k = 0; k <4; k++){
+//                     int tx = dx[k] + i;
+//                     int ty = dy[k] + j;
+//                 if(tx < 0 || ty < 0 || tx >= gridSize || ty >= gridColSize[0] || !grid[tx][ty])
+//                     count+=1;
+//             }
+//         }
+//     }
+// }
+//     return count;
+// }
+
+// int islandPerimeter(int** grid, int gridSize, int* gridColSize){
+// }
+
+//1748. 唯一元素的和
+int sumOfUnique(int* nums, int numsSize){
+	//int count[101] = {0};
+	int count[101];
+	memset(count, 0, sizeof(count));
+	for (int i = 0; i < numsSize; i++){
+		count[nums[i]]++;
+	}
+	int ret = 0;
+	for (int j = 0; j < numsSize; j++){
+		if (count[nums[j]] == 1)
+			ret += nums[j];
+	}
+	return ret;
+}
+
+//136. 只出现一次的数字
+// int singleNumber(int* nums, int numsSize){
+//     int ret = 0;
+//     for(int i = 0; i < numsSize; ++i){
+//         ret^=nums[i];
+//     }
+//     return ret;
+// }
+
+// int singleNumber(int* nums, int numsSize){
+//     int hash[1001] = {0};
+//     for(int i = 0; i < numsSize; i++){
+//         hash[nums[i]]++;//Line 4: Char 13: runtime error: index -1 out of bounds for type 'int [1001]' [solution.c]//无法解决负数的保存问题
+//     }
+//     int count = 0;
+//     for(int i = 0; i < numsSize; i++){
+//         if(hash[nums[i]] == 1)
+//             return nums[i];
+//     }
+//     return -1;
+// }//错误示例
+
+// int singleNumber(int* nums, int numsSize){
+//     int max = INT_MIN, min = INT_MAX;
+//     for(int i = 0; i < numsSize; i++){
+//         max = fmax(nums[i],max);
+//         min = fmin(nums[i],min);
+//     }
+//     int len = max - min + 1;
+//     //int hash[len + 1] = {0};//可变大小的对象可能未初始化[solution.c] 为什么？
+//     int *hash = (int*)malloc(sizeof(int)*len);
+//     memset(hash,0,sizeof(int)*len);
+//     for(int i = 0; i < numsSize; i++){
+//         hash[nums[i]- min]++;
+//     }
+//     for(int i = 0; i < numsSize; i++){
+//         if(hash[nums[i]-min] == 1)
+//             return nums[i];
+//     }
+//     return -1;
+// }
+
+//1. 两数之和
+class Solution {
+public:
+	vector<int> twoSum(vector<int>& nums, int target) {
+		int n = nums.size();
+		for (int i = 0; i < n; i++){
+			for (int j = i + 1; j < n; j++){
+				if (nums[i] + nums[j] == target)
+					return{ i, j };
+			}
+		}
+		return{};
+	}
+};
+
+//1437. 是否所有 1 都至少相隔 k 个元素
+class Solution {
+public:
+	bool kLengthApart(vector<int>& nums, int k) {
+		int n = nums.size();
+		int prev = -1;
+		for (int i = 0; i < n; i++){
+			if (nums[i] == 1){
+				if (prev != -1 && i - prev - 1<k)
+					return false;
+				prev = i;
+			}
+		}
+		return true;
+	}
+};
+
+
 int main()
 {
 	EXIT_SUCCESS;

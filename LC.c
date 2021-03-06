@@ -2887,6 +2887,27 @@ public:
 	}
 };
 
+//503. 下一个更大元素 II
+/**
+* Note: The returned array must be malloced, assume caller calls free().
+*/
+int* nextGreaterElements(int* nums, int numsSize, int* returnSize){
+	*returnSize = numsSize;
+	if (numsSize == 0)
+		return NULL;
+	int *ret = (int*)malloc(sizeof(int)*numsSize);
+	memset(ret, -1, sizeof(int)*numsSize);
+	int stack[numsSize * 2 - 1];
+	int top = 0;
+	for (int i = 0; i < numsSize * 2 - 1; i++){
+		while (top > 0 && nums[stack[top - 1]] < nums[i%numsSize]){
+			ret[stack[top - 1]] = nums[i%numsSize];
+			top--;
+		}
+		stack[top++] = i%numsSize;
+	}
+	return ret;
+}
 
 int main()
 {

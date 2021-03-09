@@ -2887,82 +2887,23 @@ public:
 	}
 };
 
-//503. 下一个更大元素 II
-/**
-* Note: The returned array must be malloced, assume caller calls free().
-*/
-int* nextGreaterElements(int* nums, int numsSize, int* returnSize){
-	*returnSize = numsSize;
-	if (numsSize == 0)
-		return NULL;
-	int *ret = (int*)malloc(sizeof(int)*numsSize);
-	memset(ret, -1, sizeof(int)*numsSize);
-	int stack[numsSize * 2 - 1];
-	int top = 0;
-	for (int i = 0; i < numsSize * 2 - 1; i++){
-		while (top > 0 && nums[stack[top - 1]] < nums[i%numsSize]){
-			ret[stack[top - 1]] = nums[i%numsSize];
-			top--;
+//1047. 删除字符串中的所有相邻重复项
+char * removeDuplicates(char * S){
+	int n = strlen(S);
+	char *stack = (char*)malloc(sizeof(char)*(n + 1));
+	int RTZ = 0;
+	for (int i = 0; i < n; i++){
+		if (RTZ > 0 && stack[RTZ - 1] == S[i]){
+			RTZ--;
 		}
-		stack[top++] = i%numsSize;
+		else
+			stack[RTZ++] = S[i];
 	}
-	return ret;
+	stack[RTZ] = '\0';
+	return stack;
 }
 
-/**
-* Return an array of arrays of size *returnSize.
-* The sizes of the arrays are returned as *returnColumnSizes array.
-* Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
-*/
-void dfs(char* s, int n, int i, int** f, char*** ret, int* retSize, int* retColSize, char** ans, int* ansSize) {
-	if (i == n) {
-		char** tmp = malloc(sizeof(char*)* (*ansSize));
-		for (int j = 0; j < (*ansSize); j++) {
-			int ansColSize = strlen(ans[j]);
-			tmp[j] = malloc(sizeof(char)* (ansColSize + 1));
-			strcpy(tmp[j], ans[j]);
-		}
-		ret[*retSize] = tmp;
-		retColSize[(*retSize)++] = *ansSize;
-		return;
-	}
-	for (int j = i; j < n; ++j) {
-		if (f[i][j]) {
-			char* sub = malloc(sizeof(char)* (j - i + 2));
-			for (int k = i; k <= j; k++) {
-				sub[k - i] = s[k];
-			}
-			sub[j - i + 1] = '\0';
-			ans[(*ansSize)++] = sub;
-			dfs(s, n, j + 1, f, ret, retSize, retColSize, ans, ansSize);
-			--(*ansSize);
-		}
-	}
-}
 
-char*** partition(char* s, int* returnSize, int** returnColumnSizes) {
-	int n = strlen(s);
-	int retMaxLen = n * (1 << n);
-	char*** ret = malloc(sizeof(char**)* retMaxLen);
-	*returnSize = 0;
-	*returnColumnSizes = malloc(sizeof(int)* retMaxLen);
-	int* f[n];
-	for (int i = 0; i < n; i++) {
-		f[i] = malloc(sizeof(int)* n);
-		for (int j = 0; j < n; j++) {
-			f[i][j] = 1;
-		}
-	}
-	for (int i = n - 1; i >= 0; --i) {
-		for (int j = i + 1; j < n; ++j) {
-			f[i][j] = (s[i] == s[j]) && f[i + 1][j - 1];
-		}
-	}
-	char* ans[n];
-	int ansSize = 0;
-	dfs(s, n, 0, f, ret, returnSize, *returnColumnSizes, ans, &ansSize);
-	return ret;
-}
 int main()
 {
 	EXIT_SUCCESS;

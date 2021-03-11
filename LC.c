@@ -2903,6 +2903,43 @@ char * removeDuplicates(char * S){
 	return stack;
 }
 
+//2021_3_11
+//227. 基本计算器 II
+ int calculate(char * s){
+	int n = strlen(s);
+	int stack[n], top = 0;
+	char sign = '+'; //防止全是数字的情况
+	int num = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (isdigit(s[i]))
+			num = num * 10 + (int)(s[i] - '0');//int不知可省略否
+		if (!isdigit(s[i]) && s[i] != ' ' || i == n - 1){
+			switch (sign){
+			case'+':
+				stack[top++] = num;//
+				break;
+			case'-':
+				stack[top++] = -num;
+				break;
+			case'*':
+				stack[top - 1] *= num;
+				break;
+			default:
+				stack[top - 1] /= num;
+				break;
+			}
+			sign = s[i];//后面没有运算符的情况
+			num = 0;
+		}
+	}
+	int ret = 0;
+	for (int i = 0; i < top; i++){
+		ret += stack[i];
+	}
+	return ret;
+}
+
 
 int main()
 {

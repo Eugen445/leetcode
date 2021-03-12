@@ -2940,6 +2940,34 @@ char * removeDuplicates(char * S){
 	return ret;
 }
 
+ //331. 验证二叉树的前序序列化
+ bool isValidSerialization(char * preorder){
+	 int n = strlen(preorder);
+	 int stack[n], top = 0;
+	 int i = 0;
+	 stack[top++] = 1;
+	 while (i < n){
+		 if (!top)
+			 return false;
+		 if (preorder[i] == ',')
+			 i++;
+		 else if (preorder[i] == '#'){
+			 stack[top - 1] -= 1;
+			 if (stack[top - 1] == 0)
+				 top--;
+			 i++;
+		 }
+		 else{
+			 while (i < n && preorder[i] != ',')
+				 i++;
+			 stack[top - 1] -= 1;
+			 if (stack[top - 1] == 0)
+				 top--;
+			 stack[top++] = 2;
+		 }
+	 }
+	 return !top;
+ }
 
 int main()
 {

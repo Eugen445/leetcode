@@ -1,6 +1,23 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_15
+//925. 长按键入
+class Solution {
+public:
+	bool isLongPressedName(string name, string typed) {
+		int i = 0, j = 0;
+		while (j < typed.length()){
+			if (i < name.length() && name[i] == typed[j])
+				i++, j++;
+			else if (j > 0 && typed[j] == typed[j - 1])
+				j++;
+			else return false;
+		}
+		return i == name.length();
+	}
+};
+
 //2021_3_14
 //141. 环形链表
 // class Solution {

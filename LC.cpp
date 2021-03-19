@@ -2,6 +2,334 @@
 using namespace std;
 
 //2021_3_19
+//242. 有效的字母异位词
+class Solution {
+public:
+	bool isAnagram(string s, string t) {
+		int ret[26]{};
+		for (int i = 0; i < s.size(); ++i)
+			ret[s[i] - 'a']++;
+
+		for (int i = 0; i < t.size(); ++i)
+			ret[t[i] - 'a']--;
+
+		for (int i = 0; i < 26; i++){
+			if (ret[i] != 0)
+				return false;
+		}
+		return true;
+	}
+};
+
+//142. 环形链表 II
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	ListNode *detectCycle(ListNode *head) {
+		// if (head == nullptr || head->next = nullptr)
+		//     return -1;
+		ListNode *fast = head;
+		//ListNode *fast = head->next;根据公式刚好差一个永远无法相遇
+		ListNode *slow = head;
+
+		while (fast && fast->next){
+			fast = fast->next->next;
+			slow = slow->next;
+			//if (fast->val == slow->val){//值是有可能重复的
+			if (fast == slow){
+				ListNode *index1 = head;
+				ListNode *index2 = fast;
+				while (index1 != index2){
+					index1 = index1->next;
+					index2 = index2->next;
+				}
+				return index2;
+			}
+		}
+		return NULL;
+	}
+};
+
+//206. 反转链表
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode() : val(0), next(nullptr) {}
+*     ListNode(int x) : val(x), next(nullptr) {}
+*     ListNode(int x, ListNode *next) : val(x), next(next) {}
+* };
+*/
+// class Solution {
+// public:
+//     ListNode* reverseList(ListNode* head) {
+//         ListNode *temp;
+//         ListNode *cur = head;
+//         ListNode *pre = NULL;
+//         while (cur){
+//             temp = cur->next;
+//             cur->next = pre;
+//             pre = cur;
+//             cur = temp;//
+//         }
+//         return pre;
+//     }
+// };
+
+class Solution {
+public:
+	ListNode* reverse(ListNode *pre, ListNode *cur){
+		if (cur == NULL)
+			return pre;
+		ListNode* temp = cur->next;
+		cur->next = pre;
+
+		return reverse(cur, temp);
+	}
+
+	ListNode* reverseList(ListNode* head) {
+		ListNode* cur = head;
+		ListNode* pre = NULL;
+
+		return reverse(pre, cur);
+	}
+};
+
+//203. 移除链表元素
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode() : val(0), next(nullptr) {}
+*     ListNode(int x) : val(x), next(nullptr) {}
+*     ListNode(int x, ListNode *next) : val(x), next(next) {}
+* };
+*/
+
+class Solution {
+public:
+	ListNode* removeElements(ListNode* head, int val) {
+
+		while (head != NULL && head->val == val) { // 注意这里不是if
+			ListNode* tmp = head;
+			head = head->next;
+			delete tmp;
+		}
+
+		ListNode* cur = head;
+		while (cur != NULL && cur->next != NULL) {//[7,7,7,7] 7
+			if (cur->next->val == val) {
+				ListNode* tmp = cur->next;
+				cur->next = cur->next->next;
+				delete tmp;
+			}
+			else {
+				cur = cur->next;
+			}
+		}
+		return head;
+	}
+};
+
+//  class Solution {
+// public:
+//     ListNode* removeElements(ListNode* head, int val) {
+//         ListNode *dummy = new ListNode(0);
+//         dummy->next = head;
+//         ListNode *cur = dummy;
+
+//         while (cur->next != nullptr){
+
+//             if (cur->next->val == val){
+
+//                 ListNode *tmp = cur->next;
+//                 cur->next = cur->next->next;
+//                 delete tmp;
+//             }
+//             else
+//                 cur = cur->next;
+//         }
+//         return dummy->next;
+//     }
+// };
+
+// class Solution {
+// public:
+//     ListNode* removeElements(ListNode* head, int val) {
+
+//         ListNode *dummy = new ListNode(0);
+//         dummy->next = head;
+
+//         ListNode *pre = dummy;
+//         ListNode *cur = head;
+
+//         while (cur != nullptr){
+
+//             if (cur->val == val){
+//                 pre->next = cur->next;
+//                 cur = cur->next;
+//             }
+//             else{
+//             cur = cur->next;
+//             pre = pre->next;
+//             }
+//         }
+//         return dummy->next;
+//     }
+// };
+
+//剑指 Offer 05. 替换空格
+class Solution {
+public:
+	string replaceSpace(string s) {
+		int oldSize = s.size();
+		int count = 0;
+
+		for (int i = 0; i < oldSize; i++){
+
+			if (s[i] == ' ')
+				count++;
+		}
+
+		//resize(s.size(), count * 2);//错误
+		s.resize(s.size() + count * 2);
+		int newSize = s.size();
+
+		//for (int i = newSize - 1, j = oldSize - 1; j >= 0; --i, --j){//脑子想不到下面的
+		for (int i = newSize - 1, j = oldSize - 1; j < i; --i, --j){
+
+			if (s[j] != ' ')
+				s[i] = s[j];
+
+			else{
+				s[i] = '0';
+				s[i - 1] = '2';
+				s[i - 2] = '%';
+				i -= 2;
+			}
+		}
+		return s;
+	}
+};
+
+//541. 反转字符串 II
+// class Solution {
+// public:
+//     string reverseStr(string s, int k) {
+
+//         for (int i = 0 ; i < s.size(); i+= (2 * k)){
+
+//             if (i + k <= s.size()){//等号的问题，设置一个k = size 的情况看
+
+//                 reverse(s.begin() + i, s.begin() + i + k);
+//                 continue;
+//             }
+
+//             reverse(s.begin() + i, s.begin() + s.size());
+//         }
+//         return s;
+//     }
+// };//reverse 函数的用法
+
+class Solution {
+public:
+
+	void reverse(string &s, int start, int end){
+		int offest = (end - start + 1) / 2; //start的下标不是固定为0
+
+		//for (start; start < (start + offest); start++, end--)//这样写是、start + offest 的判定条件永远不会终止
+		for (int i = start, j = end; i < (start + offest); ++i, --j)
+			swap(s[i], s[j]);
+	}
+
+	string reverseStr(string s, int k) {
+
+		for (int i = 0; i < s.size(); i += (2 * k)){
+
+			if (i + k <= s.size()){
+
+				reverse(s, i, i + k - 1);
+				continue;
+			}
+
+			reverse(s, i, s.size() - 1);
+		}
+		return s;
+	}
+};
+
+//344. 反转字符串
+// class Solution {
+// public:
+//     void reverseString(vector<char>& s) {
+//         int left = 0, right = s.size() - 1;
+
+//         while (left < right){
+
+//             int temp = s[left];
+//             s[left] = s[right];
+//             s[right] = temp;
+
+//             left++, right--;
+//         }
+//     }
+// };
+
+class Solution {
+public:
+	void reverseString(vector<char>& s) {
+		for (int i = 0, j = s.size() - 1; i < s.size() / 2; i++, j--)
+			swap(s[i], s[j]);
+	}
+};
+
+//59. 螺旋矩阵 II
+class Solution {
+public:
+	vector<vector<int>> generateMatrix(int n) {
+		vector<vector<int>> res(n, vector<int>(n, 0));
+		int startx = 0;
+		int starty = 0;
+		int count = 1;
+		int loop = n / 2;
+		int mid = n / 2;
+		int offest = 1;
+		int i, j;
+		while (loop--){
+
+			for (j = starty; j < starty + n - offest; j++)
+				res[startx][j] = count++;
+
+			for (i = startx; i < startx + n - offest; i++)
+				res[i][j] = count++;
+
+			for (; j > starty; j--)
+				res[i][j] = count++;
+
+			for (; i > startx; i--)
+				res[i][j] = count++;
+
+			startx++;
+			starty++;
+
+			offest += 2;
+		}
+
+		if (n % 2)
+			res[mid][mid] = count;
+		return res;
+
+	}
+};
 
 //1603. 设计停车系统
 class ParkingSystem {

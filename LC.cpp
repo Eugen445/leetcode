@@ -1,6 +1,49 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_20
+//28. 实现 strStr()
+class Solution {
+public:
+
+	void GetNext(int *next, const string & needle){
+		int j = -1;
+		next[0] = j;
+		int len = needle.size();
+		for (int i = 1; i < len; i++){
+
+			while (j >= 0 && needle[j + 1] != needle[i])
+				j = next[j];
+
+			if (needle[i] == needle[j + 1])
+				j++;
+
+			next[i] = j;
+		}
+	}
+
+	int strStr(string haystack, string needle) {
+		if (needle.size() == 0)
+			return 0;
+		int next[needle.size()];
+		GetNext(next, needle);
+		int j = -1;
+		int hay_len = haystack.size();
+		for (int i = 0; i < hay_len; i++){
+
+			while (j >= 0 && haystack[i] != needle[j + 1]){
+				j = next[j];
+			}
+			if (haystack[i] == needle[j + 1])
+				j++;
+			if (j == (needle.size() - 1)){
+				return (i - needle.size() + 1);
+			}
+		}
+		return -1;
+	}
+};
+
 //2021_3_19
 //242. 有效的字母异位词
 class Solution {

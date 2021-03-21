@@ -1,7 +1,432 @@
 #include<iostream>
 using namespace std;
 
+//222. 完全二叉树的节点个数
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
 
+class Solution {
+public:
+	int getNum(TreeNode* cur) {
+		if (cur == 0) return 0;
+		int left_num = getNum(cur->left);
+		int right_num = getNum(cur->right);
+		int tree_num = left_num + right_num + 1;
+
+		return tree_num;
+	}
+	int countNodes(TreeNode* root) {
+		return getNum(root);
+	}
+};
+
+// class Solution {
+// public:
+//     int countNodes(TreeNode* root) {
+//         if (root == NULL) return 0;
+//         queue<TreeNode*> que;
+//         que.push(root);
+
+//         int sum = 1;
+//         while (!que.empty()) {
+//             int size = que.size();
+
+//             for (int i = 0; i < size; i++) {
+
+//                 TreeNode* node = que.front();
+//                 que.pop();
+
+//                 if (node->left) {
+//                     sum++;
+//                     que.push(node->left);
+//                 }
+//                 if (node->right) {
+//                     sum++;
+//                     que.push(node->right);
+//                 }
+//             }
+//         }
+//         return sum;
+//     }
+// };
+
+//111. 二叉树的最小深度
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+
+class Solution {
+public:
+	int getDepth(TreeNode* node) {
+		if (node == NULL) return 0;
+		int leftDepth = getDepth(node->left);
+		int rightDepth = getDepth(node->right);
+
+		if (node->left == NULL && node->right != NULL) {
+			return 1 + rightDepth;
+		}
+		if (node->left != NULL && node->right == NULL) {
+			return 1 + leftDepth;
+		}
+		int result = 1 + min(leftDepth, rightDepth);
+		return result;
+	}
+	int minDepth(TreeNode* root) {
+		return getDepth(root);
+	}
+};
+
+// class Solution {
+// public:
+//     int minDepth(TreeNode* root) {
+//         if (root == NULL) return 0;
+//         queue<TreeNode*> que;
+//         que.push(root);
+//         int minDepth = 0;
+
+//         while (!que.empty()) {
+
+//             int size = que.size();
+//             minDepth++;
+//             int flag = 0;
+
+//             for (int i = 0; i < size; i++){
+//                 TreeNode* node = que.front();
+//                 que.pop();
+//                 if (node->left) que.push(node->left);
+//                 if (node->right) que.push(node->right);
+//                 if (!node->left && !node->right) {
+//                     flag = 1;
+//                     break;
+//                 }
+//             }
+//             if (flag == 1) break;
+//         }
+//         return minDepth;
+//     }
+// };
+
+//559. N 叉树的最大深度
+/*
+// Definition for a Node.
+class Node {
+public:
+int val;
+vector<Node*> children;
+
+Node() {}
+
+Node(int _val) {
+val = _val;
+}
+
+Node(int _val, vector<Node*> _children) {
+val = _val;
+children = _children;
+}
+};
+*/
+
+class Solution {
+public:
+	int maxDepth(Node* root) {
+		if (root == NULL) return 0;
+		queue<Node*> que;
+		que.push(root);
+		int Depth = 0;
+
+		while (!que.empty()) {
+			int size = que.size();
+			Depth++;
+			for (int i = 0; i < size; i++){
+				Node* node = que.front();
+				que.pop();
+
+				int cdn_s = node->children.size();
+				for (int i = 0; i < cdn_s; i++) {
+					if (node->children[i]) que.push(node->children[i]);
+				}
+			}
+		}
+		return Depth;
+	}
+};
+
+//104. 二叉树的最大深度
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+// class Solution {
+// public:
+//     int maxDepth(TreeNode* root) {
+//         if (root == NULL) return 0;
+//         int l_Depth = maxDepth(root->left);
+//         int r_Depth = maxDepth(root->right);
+
+//         return (l_Depth > r_Depth) ? l_Depth + 1 : r_Depth + 1;
+//     }
+// };
+
+// class Solution {
+// public:
+//     int maxDepth(TreeNode* root) {
+//         if (root == nullptr) return 0;
+//         queue<TreeNode*> que;
+//         que.push(root);
+//         int Depth = 0;
+
+//         while (!que.empty()) {
+//             int size = que.size();
+//             Depth++;
+//             for (int i = 0; i < size; i++) {
+//                 TreeNode* node = que.front();
+//                 que.pop();
+//                 if (node->left) que.push(node->left);
+//                 if (node->right) que.push(node->right);
+//             }
+//         }
+//         return Depth;
+//     }
+// };
+
+//101. 对称二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+
+
+
+class Solution {
+public:
+	bool isSymmetric(TreeNode* root) {
+
+		if (root == NULL)   return true;
+
+		queue<TreeNode*> que;//栈也可以
+		que.push(root->left);
+		que.push(root->right);
+
+		while (!que.empty()) {
+			TreeNode *leftNode = que.front(); que.pop();
+			TreeNode *rightNode = que.front(); que.pop();
+
+			if (!leftNode && !rightNode){
+				continue;
+			}
+			if (!leftNode || !rightNode || (leftNode->val != rightNode->val)){
+				return false;
+			}
+			que.push(leftNode->left);
+			que.push(rightNode->right);
+			que.push(leftNode->right);
+			que.push(rightNode->left);
+		}
+		return true;
+	}
+};
+
+// class Solution {
+// public:
+//     bool compare(TreeNode* left, TreeNode* right) {
+//         if (left != NULL && right == NULL)  return false;
+//         else if (left == NULL && right != NULL) return false;
+//         else if (left == NULL && right == NULL) return true;
+//         else if (left->val != right->val)   return false;
+
+//         bool inSide = compare(left->right, right->left);
+//         bool ouSide = compare(left->left, right->right);
+//         bool isSame = inSide && ouSide;
+
+//         return isSame;
+//     }
+//     bool isSymmetric(TreeNode* root) {
+//         if (root == NULL) return true;
+//         return compare(root->left, root->right);
+//     }
+// };
+
+//429. N 叉树的层序遍历
+/*
+// Definition for a Node.
+class Node {
+public:
+int val;
+vector<Node*> children;
+
+Node() {}
+
+Node(int _val) {
+val = _val;
+}
+
+Node(int _val, vector<Node*> _children) {
+val = _val;
+children = _children;
+}
+};
+*/
+
+class Solution {
+public:
+	vector<vector<int>> levelOrder(Node* root) {
+		queue<Node*> que;
+		vector<vector<int>> result;
+
+		if (root != NULL) que.push(root);
+
+		while (!que.empty()){
+			int size = que.size();
+			vector<int> vec;
+			for (int i = 0; i < size; i++) {
+				Node *node = que.front();
+				que.pop();
+				vec.push_back(node->val);
+				int len_children = node->children.size();
+				for (int i = 0; i < len_children; i++) {
+					if (node->children[i]) que.push(node->children[i]);
+				}
+			}
+			result.push_back(vec);
+		}
+		return result;
+	}
+};
+
+//637. 二叉树的层平均值
+/*
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	vector<double> averageOfLevels(TreeNode* root) {
+		queue<TreeNode*> que;
+		vector<double> result;
+
+		if (root != NULL) que.push(root);
+
+		while (!que.empty()){
+			int size = que.size();
+			double sum = 0;
+			for (int i = 0; i < size; i++){
+				TreeNode* node = que.front();
+				que.pop();
+				sum += node->val;
+				if (node->left) que.push(node->left);
+				if (node->right) que.push(node->right);
+			}
+			result.push_back(sum / size);
+		}
+		return result;
+	}
+};
+
+//199. 二叉树的右视图
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	vector<int> rightSideView(TreeNode* root) {
+		queue<TreeNode*> que;
+		if (root != nullptr) que.push(root);
+		vector<int> result;
+		while (!que.empty()){
+			int size = que.size();
+			for (int i = 0; i < size; i++){
+				TreeNode *node = que.front();
+				que.pop();
+				if (i == (size - 1)) result.push_back(node->val);
+				if (node->left) que.push(node->left);
+				if (node->right) que.push(node->right);
+			}
+		}
+		return result;
+	}
+};
+
+//107. 二叉树的层序遍历 II
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	vector<vector<int>> levelOrderBottom(TreeNode* root) {
+		queue<TreeNode*> que;
+		if (root != NULL) que.push(root);
+		vector<vector<int>> result;
+		while (!que.empty()) {
+			int size = que.size();
+			vector<int>vec;
+			for (int i = 0; i < size; i++) {
+				TreeNode *node = que.front();
+				que.pop();
+				vec.push_back(node->val);
+				if (node->left) que.push(node->left);
+				if (node->right) que.push(node->right);
+			}
+			result.push_back(vec);
+		}
+		reverse(result.begin(), result.end());
+		return result;
+	}
+};
 
 //102. 二叉树的层序遍历
 /**

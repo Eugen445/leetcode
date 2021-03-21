@@ -1,7 +1,162 @@
 #include<iostream>
 using namespace std;
 
-//
+
+
+//102. 二叉树的层序遍历
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	vector<vector<int>> levelOrder(TreeNode* root) {
+		queue<TreeNode*> que;
+		if (root != NULL) que.push(root);
+		vector<vector<int>> result;
+
+		while (!que.empty()) {
+			int size = que.size();
+			vector<int> vec;
+
+			for (int i = 0; i < size; i++) {
+				TreeNode* node = que.front();
+				que.pop();
+				vec.push_back(node->val);
+				if (node->left) que.push(node->left);
+				if (node->right) que.push(node->right);
+			}
+			result.push_back(vec);
+		}
+		return result;
+	}
+};
+
+
+//145. 二叉树的后序遍历
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	vector<int> postorderTraversal(TreeNode* root) {
+		vector<int> result;
+		stack<TreeNode*> st;
+		st.push(root);
+		while (!st.empty()) {
+			TreeNode *node = st.top();
+			st.pop();
+
+			if (node != NULL) result.push_back(node->val);
+			else continue;
+
+			st.push(node->left);
+			st.push(node->right);
+		}
+		reverse(result.begin(), result.end());
+
+		return result;
+	}
+};
+
+//94. 二叉树的中序遍历
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	vector<int> inorderTraversal(TreeNode* root) {
+		vector<int> result;
+		stack<TreeNode*> st;
+		TreeNode* cur = root;
+
+		while (cur != NULL || !st.empty()){
+			if (cur != NULL){
+				st.push(cur);
+				cur = cur->left;
+			}
+			else{
+				cur = st.top();
+				st.pop();
+				result.push_back(cur->val);
+				cur = cur->right;
+			}
+		}
+		return result;
+	}
+};
+
+//144. 二叉树的前序遍历
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+
+class Solution {
+public:
+	vector<int> preorderTraversal(TreeNode* root) {
+		stack<TreeNode*> st;
+		vector<int> result;
+		st.push(root);
+
+		while (!st.empty()) {
+			TreeNode* node = st.top();
+			st.pop();
+
+			if (node != nullptr) result.push_back(node->val);
+			else continue;
+			st.push(node->right);
+			st.push(node->left);
+		}
+		return result;
+	}
+};
+
+// class Solution {
+// public:
+//     void travelsal(TreeNode* cur, vector<int>& vec){
+//         if (cur == nullptr) return;
+
+//         vec.push_back(cur->val);
+//         travelsal(cur->left, vec);
+//         travelsal(cur->right, vec);
+//     }
+//     vector<int> preorderTraversal(TreeNode* root) {
+//         vector<int> result;
+//         travelsal(root, result);
+//         return result;
+//     }
+// };
 
 //239. 滑动窗口最大值
 class Solution {

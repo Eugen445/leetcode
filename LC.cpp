@@ -1,6 +1,245 @@
 #include<iostream>
 using namespace std;
 
+//
+
+//239. 滑动窗口最大值
+class Solution {
+private:
+	class MyQueue {
+	public:
+		deque<int> que;
+		void pop(int value){
+			if (!que.empty() && value == que.front()) {
+				que.pop_front();
+			}
+		}
+		void push(int value) {
+			while (!que.empty() && value > que.back()) {
+				que.pop_back();
+			}
+			que.push_back(value);
+		}
+
+		int front() {
+			return que.front();
+		}
+	};
+public:
+	vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+		MyQueue que;
+		vector<int> result;
+
+		for (int i = 0; i < k; i++){
+			que.push(nums[i]);
+		}
+		result.push_back(que.front());
+		int len_n = nums.size();
+		for (int i = k; i < len_n; i++) {
+			que.pop(nums[i - k]);
+			que.push(nums[i]);
+			result.push_back(que.front());
+		}
+		return result;
+	}
+};
+
+//150. 逆波兰表达式求值
+class Solution {
+public:
+	int evalRPN(vector<string>& tokens) {
+		stack<int> st;
+		int tSize = tokens.size();
+
+		for (int i = 0; i < tSize; i++) {
+			//if (tokens[i] == '+' || tokens[i] == '-' || tokens[i] == '*' || tokens[i] == '/') {错误
+			if (tokens[i] == "+" || tokens[i] == "-" || tokens[i] == "*" || tokens[i] == "/") {
+				int num1 = st.top();
+				st.pop();
+				int num2 = st.top();
+				st.pop();
+				if (tokens[i] == "+") st.push(num2 + num1);
+				if (tokens[i] == "-") st.push(num2 - num1);//这几个判定是一个级别的不能用else if //可以else if
+				if (tokens[i] == "*") st.push(num2 * num1);
+				if (tokens[i] == "/") st.push(num2 / num1);
+			}
+			else{
+				st.push(stoi(tokens[i]));
+			}
+		}
+		int result = st.top();
+		st.pop();
+		return result;
+	}
+};
+
+//1047. 删除字符串中的所有相邻重复项
+class Solution {
+public:
+	string removeDuplicates(string S) {
+		stack<char> st;
+		for (char s : S) {
+			if (st.empty() || s != st.top()){
+				st.push(s);
+			}
+			else{
+				st.pop();
+			}
+		}
+		string result = "";
+		while (!st.empty()){
+			result += st.top();//+=操作会了再看
+			st.pop();
+		}
+		reverse(result.begin(), result.end());
+		return result;
+	}
+};
+
+//20. 有效的括号
+class Solution {
+public:
+	bool isValid(string s) {
+		stack<int>st;
+		int len_s = s.size();
+		for (int i = 0; i < len_s; i++) {
+			if (s[i] == '(') st.push(')');
+			else if (s[i] == '[') st.push(']');
+			else if (s[i] == '{') st.push('}');
+			else if (st.empty() || st.top() != s[i]) return false;
+			else st.pop();
+		}
+		return st.empty();
+	}
+};
+
+//225. 用队列实现栈
+class MyStack {
+public:
+	queue<int>que1;
+	queue<int>que2;
+	/** Initialize your data structure here. */
+	MyStack() {
+
+	}
+
+	/** Push element x onto stack. */
+	void push(int x) {
+		que1.push(x);
+	}
+
+	/** Removes the element on top of the stack and returns that element. */
+	int pop() {
+		int size = que1.size();
+		size--;
+		while (size--) {
+			que2.push(que1.front());
+			que1.pop();
+		}
+		int result = que1.front();
+		que1.pop();
+		que1 = que2;
+
+		while (!que2.empty()) {
+			que2.pop();
+		}
+		return result;
+	}
+
+	/** Get the top element. */
+	int top() {
+		return que1.back();
+	}
+
+	/** Returns whether the stack is empty. */
+	bool empty() {
+		return que1.empty();
+	}
+};
+
+/**
+* Your MyStack object will be instantiated and called as such:
+* MyStack* obj = new MyStack();
+* obj->push(x);
+* int param_2 = obj->pop();
+* int param_3 = obj->top();
+* bool param_4 = obj->empty();
+*/
+
+//232. 用栈实现队列
+class MyQueue {
+public:
+	/** Initialize your data structure here. */
+	stack<int> stIn;
+	stack<int> stOut;
+	MyQueue() {
+
+	}
+
+	/** Push element x to the back of queue. */
+	void push(int x) {
+		stIn.push(x);
+	}
+
+	/** Removes the element from in front of queue and returns that element. */
+	int pop() {
+		if (stOut.empty()){
+			while (!stIn.empty()){
+				stOut.push(stIn.top());
+				stIn.pop();
+			}
+		}
+		int result = stOut.top();
+		stOut.pop();
+		return result;
+	}
+
+	/** Get the front element. */
+	int peek() {
+		int result = this->pop();
+		stOut.push(result);
+		return result;
+	}
+
+	/** Returns whether the queue is empty. */
+	bool empty() {
+		return stIn.empty() && stOut.empty();
+	}
+};
+
+/**
+* Your MyQueue object will be instantiated and called as such:
+* MyQueue* obj = new MyQueue();
+* obj->push(x);
+* int param_2 = obj->pop();
+* int param_3 = obj->peek();
+* bool param_4 = obj->empty();
+*/
+
+//2021_3_21
+//73. 矩阵置零
+class Solution {
+public:
+	void setZeroes(vector<vector<int>>& matrix) {
+		int rowSize = matrix.size();
+		int colSize = matrix[0].size();
+		vector<int>row(rowSize), col(colSize);
+		for (int i = 0; i < rowSize; i++){
+			for (int j = 0; j < colSize; j++){
+				if (!matrix[i][j]){
+					row[i] = col[j] = true;
+				}
+			}
+		}
+		for (int i = 0; i < rowSize; i++){
+			for (int j = 0; j < colSize; j++){
+				if (row[i] || col[j])
+					matrix[i][j] = 0;
+			}
+		}
+	}
+};
+
 //2021_3_20
 //28. 实现 strStr()
 class Solution {

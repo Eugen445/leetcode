@@ -1,6 +1,33 @@
 #include<iostream>
 using namespace std;
 
+//191. 位1的个数
+// class Solution {
+// public:
+//     int hammingWeight(uint32_t n) {
+//         int count = 0;
+//         int total = 0;
+//         while (count <= 31) {
+//             if (n & 1) {
+//                 total++;
+//             }
+//             n = n >> 1;
+//             count++;
+//         }
+//         return total;
+//     }
+// };
+
+ class Solution {
+ public:
+     int hammingWeight(uint32_t n) {
+         if (n == 0) return 0;
+         int count = 1;//循环会少一次
+         while (n =(n & (n-1))) count++;
+         return count;
+     }
+ };
+
 //222. 完全二叉树的节点个数
 /**
 * Definition for a binary tree node.

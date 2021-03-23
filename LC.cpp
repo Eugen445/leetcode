@@ -1,6 +1,106 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_23
+
+//513. 找树左下角的值
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+
+class Solution {
+public:
+	int findBottomLeftValue(TreeNode* root) {//层序遍历yyds
+		queue<TreeNode*> que;
+		int result = 0;
+		que.push(root);
+
+		while (!que.empty()) {
+
+			int size = que.size();
+
+			for (int i = 0; i < size; i++) {
+				TreeNode *cur = que.front();
+				que.pop();
+				if (i == 0) result = cur->val;
+				if (cur->left) que.push(cur->left);
+				if (cur->right) que.push(cur->right);
+			}
+		}
+		return result;
+	}
+};
+
+//404. 左叶子之和
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int sumOfLeftLeaves(TreeNode* root) {
+		stack<TreeNode*> st;
+		if (root == nullptr) return 0;
+		st.push(root);
+
+		int sum = 0;
+		while (!st.empty()) {
+			TreeNode *node = st.top();
+			st.pop();
+
+			if (node->right) st.push(node->right);
+			if (node->left) st.push(node->left);
+
+			if (node->left && !node->left->left && !node->left->right) {
+				sum += node->left->val;
+			}
+		}
+		return sum;
+	}
+};
+
+//100. 相同的树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	bool isSameTree(TreeNode* p, TreeNode* q) {
+		if (p == nullptr && q == nullptr) return true;
+		else if (p != nullptr && q == nullptr) return false;
+		else if (p == nullptr && q != nullptr) return false;
+		else if (p->val != q->val) return false;
+		else {
+			bool left = isSameTree(p->left, q->left);
+			bool right = isSameTree(p->right, q->right);
+			return left && right;
+		}
+	}
+};
+
+//2021_3_22
+
 //191. 位1的个数
 // class Solution {
 // public:

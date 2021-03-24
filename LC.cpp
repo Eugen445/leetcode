@@ -1,6 +1,48 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_24
+
+//112. 路径总和
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	bool Travelsl(TreeNode *cur, int count) {
+		if (!cur->left && !cur->right && count == 0) return true;
+		if (!cur->left && !cur->right) return false;
+
+		if (cur->left) {
+			count -= cur->left->val;
+			if (Travelsl(cur->left, count)) return true;
+			count += cur->left->val;
+		}
+
+		if (cur->right) {
+			count -= cur->right->val;
+			if (Travelsl(cur->right, count)) return true;
+			count += cur->right->val;
+		}
+
+		return false;
+
+	}
+	bool hasPathSum(TreeNode* root, int targetSum) {
+		if (root == NULL) return false;
+
+		return Travelsl(root, targetSum - root->val);
+	}
+};
+
 //2021_3_23
 
 //513. 找树左下角的值

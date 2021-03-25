@@ -1,6 +1,213 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_25
+
+//105. 从前序与中序遍历序列构造二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* Travel(vector<int>& preorder, int prebegin, int preend, vector<int>& inorder, int inbegin, int inend) {
+		if (preend == prebegin) return NULL;
+
+		int rootValue = preorder[prebegin];
+		TreeNode *root = new TreeNode(rootValue);
+
+		if (preend - prebegin == 1) return root;
+
+		int range;
+		for (range = inbegin; range < inend; range++) {
+			if (rootValue == inorder[range]) break;
+		}
+
+		int inleftbegin = inbegin;
+		//int inleftend = inbegin + range;//错误
+		//int inrightbegin = inbegin + range;
+		int leftend = range;
+		//int inrightbegin = range;错误
+		int inrightbegin = range + 1;
+		int inrightend = inend;
+
+		int preleftbegin = prebegin + 1;
+		int preleftend = prebegin + 1 + range - inbegin;
+		int prerightbegin = prebegin + 1 + range - inbegin;
+		int prerightend = preend;
+
+		root->left = Travel(preorder, preleftbegin, preleftend, inorder, inbegin, inend);
+		root->right = Travel(preorder, prerightbegin, prerightend, inorder, inrightbegin, inrightend);
+
+		return root;
+	}
+	TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+		if (!preorder.size() || !inorder.size()) return NULL;
+		return Travel(preorder, 0, preorder.size(), inorder, 0, inorder.size());
+	}
+};
+
+//106. 从中序与后序遍历序列构造二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* Travel(vector<int>& inorder, int inorderbegin, int inorderend, vector<int>& postorder, int postorderbegin, int postorderend) {
+		if (postorderbegin == postorderend) return NULL;
+
+		int rootValue = postorder[postorderend - 1];
+		TreeNode *root = new TreeNode(rootValue);
+
+		if (postorderend - postorderbegin == 1) return root;
+
+		int range;
+		for (range = inorderbegin; range < inorderend; range++) {
+			if (inorder[range] == rootValue) break;
+		}
+
+		int inleftbegin = inorderbegin;
+		int inleftend = range; //左闭右开
+		int inrighbegin = range + 1;
+		int inrightend = inorderend;
+
+		postorder.resize(postorder.size() - 1);
+
+		int postleftbegin = postorderbegin;
+		int postleftend = postorderbegin + range - inorderbegin;
+		int postrightbegin = postorderbegin + range - inorderbegin;
+		int postrightend = postorderend - 1;
+
+		root->left = Travel(inorder, inleftbegin, inleftend, postorder, postleftbegin, postleftend);
+		root->right = Travel(inorder, inrighbegin, inrightend, postorder, postrightbegin, postrightend);
+
+		return root;
+
+	}
+	TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+		if (!inorder.size() || !postorder.size()) return NULL;
+		return Travel(inorder, 0, inorder.size(), postorder, 0, postorder.size());
+	}
+};
+
+//82. 删除排序链表中的重复元素 II
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode() : val(0), next(nullptr) {}
+*     ListNode(int x) : val(x), next(nullptr) {}
+*     ListNode(int x, ListNode *next) : val(x), next(next) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* deleteDuplicates(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *dummy = new ListNode(0, head);
+		ListNode *cur = dummy;
+
+		while (cur->next && cur->next->next) {//有cur->next->next的这种操作，都记得判定一下cur->next->next是否为空
+			//while (cur->next) {//空的节点是不可能有值的
+
+			if (cur->next->val == cur->next->next->val) {//这一步可知
+
+				int record = cur->next->val;
+
+				while (cur->next && cur->next->val == record) {
+					cur->next = cur->next->next;
+				}
+			}
+			else {
+				cur = cur->next;
+			}
+		}
+		return dummy->next;
+	}
+};
+
+//剑指 Offer 18. 删除链表的节点
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* deleteNode(ListNode* head, int val) {
+		ListNode *dummy = new ListNode(0, head);
+		ListNode *cur = dummy;
+
+		while (cur->next) {
+
+			if (cur->next->val == val) {
+				ListNode *temp = cur->next;
+				cur->next = cur->next->next;
+				temp->next == NULL;
+			}
+			else {
+				cur = cur->next;
+			}
+		}
+		return dummy->next;
+	}
+};
+
+//83. 删除排序链表中的重复元素
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode() : val(0), next(nullptr) {}
+*     ListNode(int x) : val(x), next(nullptr) {}
+*     ListNode(int x, ListNode *next) : val(x), next(next) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* deleteDuplicates(ListNode* head) {
+		if (head == NULL || head->next == NULL) {
+			return head;
+		}
+		ListNode *cur = head;
+
+		while (cur != NULL && cur->next != NULL) {
+
+			if (cur->val == cur->next->val) {
+				ListNode *temp = cur->next;
+				cur->next = cur->next->next;
+				temp->next = NULL; //防止野指针
+			}
+			else {
+				cur = cur->next;
+			}
+		}
+		return head;
+	}
+};
+
 //2021_3_24
 
 //112. 路径总和

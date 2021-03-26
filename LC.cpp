@@ -1,6 +1,206 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_26
+
+//98. 验证二叉搜索树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+
+class Solution {
+public:
+	TreeNode* pre = NULL;
+	bool isValidBST(TreeNode* root) {//中序遍历
+		if (root == NULL) return true;
+
+		bool left = isValidBST(root->left);
+
+		if (pre != NULL && pre->val >= root->val) return false;
+
+		pre = root;
+
+		bool right = isValidBST(root->right);
+
+		return left && right;
+	}
+};
+
+class Solution {
+public:
+	bool isValidBST(TreeNode* root) {
+		stack<TreeNode*> st;
+		TreeNode *cur = root;
+		TreeNode *pre = NULL;
+		//st.push(root);//错误
+
+		while (cur != NULL || !st.empty()) {
+
+			if (cur) {
+				st.push(cur);
+				cur = cur->left;
+			}
+			else {
+				cur = st.top(); st.pop();
+				//if (pre != NULL && cur->val >= cur->right->val) return false;
+				if (pre != NULL && cur->val <= pre->val) return false;
+				pre = cur;//很重要
+				cur = cur->right;
+			}
+		}
+		return true;
+	}
+};
+
+//700. 二叉搜索树中的搜索
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* searchBST(TreeNode* root, int val) {
+		if (root == NULL && root->val == val) return root;
+		queue<TreeNode*> que;
+		que.push(root);
+
+		while (!que.empty()) {
+			TreeNode *cur = que.front(); que.pop();
+			if (cur == NULL || cur->val == val) return cur;
+
+			if (cur->val > val) que.push(cur->left);
+			if (cur->val < val) que.push(cur->right);
+		}
+		return NULL;
+	}
+};
+
+class Solution {
+public:
+	TreeNode* searchBST(TreeNode* root, int val) {
+		while (root != NULL) {//不会用！就别用
+			if (root->val > val) root = root->left;
+			else if (root->val < val) root = root->right;
+			else return root;
+		}
+		return NULL;
+	}
+};
+
+
+//617. 合并二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* mergeTrees(TreeNode* root1, TreeNode* root2) {
+		if (root1 == NULL) return root2;
+		if (root2 == NULL) return root1;
+
+		TreeNode *merge = new TreeNode(0);
+		merge->val = root1->val + root2->val;
+		merge->left = mergeTrees(root1->left, root2->left);
+		merge->right = mergeTrees(root1->right, root2->right);
+
+		return merge;
+	}
+};
+
+class Solution {
+public:
+	TreeNode* mergeTrees(TreeNode* root1, TreeNode* root2) {
+		if (root1 == NULL) return root2;
+		if (root2 == NULL) return root1;
+		queue<TreeNode*> que;
+		que.push(root1);
+		que.push(root2);
+
+		while (!que.empty()) {
+			TreeNode* node1 = que.front(); que.pop();
+			TreeNode* node2 = que.front(); que.pop();
+			node1->val += node2->val;
+
+			if (node1->left != NULL && node2->left != NULL) {
+				que.push(node1->left);
+				que.push(node2->left);
+			}
+
+			if (node1->right != NULL && node2->right != NULL) {
+				que.push(node1->right);
+				que.push(node2->right);
+			}
+
+			if (node1->left == NULL && node2->left != NULL) {
+				node1->left = node2->left;
+			}
+
+			if (node1->right == NULL && node2->right != NULL) {
+				node1->right = node2->right;
+			}
+		}
+		return root1;
+	}
+};
+
+//654. 最大二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* Travel(vector<int>&nums, int left, int right) {
+		if (left >= right) return NULL;
+
+		int maxindex = left;
+		//for (int i = left + 1; i < nums.size(); i++) {
+		for (int i = left + 1; i < right; i++) {
+			if (nums[i] > nums[maxindex]) maxindex = i;
+		}
+
+		TreeNode *root = new TreeNode(nums[maxindex]);
+
+		root->left = Travel(nums, left, maxindex);
+		root->right = Travel(nums, maxindex + 1, right);
+
+		return root;
+	}
+	TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+		return Travel(nums, 0, nums.size());
+	}
+};
+
 //2021_3_25
 
 //105. 从前序与中序遍历序列构造二叉树

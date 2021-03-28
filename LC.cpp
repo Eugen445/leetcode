@@ -3,6 +3,181 @@ using namespace std;
 
 //2021_3_28
 
+//39. 组合总和
+
+class Solution {
+public:
+	vector<vector<int>> result;
+	vector<int> tmp;
+
+	void Trackbreaking(vector<int>& candidates, int target, int sum, int Startindex) {
+
+		// if (sum > target) {
+		//     return;
+		// }
+
+		if (sum == target) {
+			result.push_back(tmp);
+			return;
+		}
+
+		for (int i = Startindex; i < candidates.size() && sum + candidates[i] <= target; i++) {
+			tmp.push_back(candidates[i]);
+			sum += candidates[i];
+			Trackbreaking(candidates, target, sum, i);//这个Startindex加不加的区分
+			sum -= candidates[i];
+			tmp.pop_back();
+		}
+	}
+
+	vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+		result.clear();
+		tmp.clear();
+		if (candidates.size() == 0) return result;
+		sort(candidates.begin(), candidates.end());
+		Trackbreaking(candidates, target, 0, 0);
+
+		return result;
+	}
+};
+
+// class Solution {
+// public:
+//     vector<vector<int>> result;
+//     vector<int> tmp;
+
+//     void Trackbreaking(vector<int>& candidates, int target, int sum) {
+
+//         if (sum > target) {
+//             return;
+//         }
+
+//         if (sum == target) {
+//             result.push_back(tmp);
+//             return;
+//         }
+
+//         for (int i = 0; i < candidates.size(); i++) {
+//             tmp.push_back(candidates[i]);
+//             sum += candidates[i];
+//             Trackbreaking(candidates, target, sum);
+//             sum -= candidates[i];
+//             tmp.pop_back();
+//         }
+//     }
+
+//     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+//         result.clear();
+//         tmp.clear();
+//         if (candidates.size() == 0) return result;
+//         Trackbreaking(candidates, target, 0);
+
+//         return result;
+//     }
+// };
+
+//17. 电话号码的字母组合
+class Solution {
+public:
+	const string leetermap[10] {
+		"", //0
+			"", //1
+			"abc",  //2
+			"def",  //3
+			"ghi",  //4
+			"jkl",  //5
+			"mno",  //6
+			"pqrs", //7
+			"tuv",  //8
+			"wxyz", //9
+	};
+	vector<string> result;
+	string s;
+	void Trackbreaking(const string& digits, int index) {
+
+		if (index == digits.size()) {
+			result.push_back(s);
+			return;
+		}
+
+		int digit = digits[index] - '0';
+		string leeters = leetermap[digit];
+
+		for (int i = 0; i < leeters.size(); i++) {
+			s.push_back(leeters[i]);
+			Trackbreaking(digits, index + 1);
+			s.pop_back();
+		}
+	}
+
+	vector<string> letterCombinations(string digits) {
+		result.clear();
+		s.clear();
+
+		if (digits.size() == 0) return result;
+		Trackbreaking(digits, 0);
+
+		return result;
+	}
+};
+
+//216. 组合总和 III
+class Solution {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+	void Trackbreaking(int k, int Startindex, int sum, int Targetnum) {
+
+		if (sum > Targetnum) return;
+
+		if (path.size() == k) {
+			if (sum == Targetnum) result.push_back(path);
+			return;
+		}
+
+		for (int i = Startindex; i <= 9; i++) {
+			path.push_back(i);
+			sum += i;
+			Trackbreaking(k, i + 1, sum, Targetnum);
+			sum -= i;
+			path.pop_back();
+		}
+	}
+	vector<vector<int>> combinationSum3(int k, int n) {
+		result.clear();
+		path.clear();
+		Trackbreaking(k, 1, 0, n);
+
+		return result;
+	}
+};
+
+//77. 组合
+class Solution {
+public:
+	vector<vector<int>> result;
+	vector<int> path;
+	void TrachBreaking(int n, int k, int startIndex) {
+
+		if (path.size() == k) {
+			result.push_back(path);
+			return;
+		}
+
+		for (int i = startIndex; i <= n - (k - path.size()) + 1; i++) { //举个例子去看判定条件
+			path.push_back(i);
+			TrachBreaking(n, k, i + 1);
+			path.pop_back();
+		}
+	}
+	vector<vector<int>> combine(int n, int k) {
+		result.clear();
+		path.clear();
+		TrachBreaking(n, k, 1);
+		return result;
+	}
+};
+
 //538. 把二叉搜索树转换为累加树
 /**
 * Definition for a binary tree node.

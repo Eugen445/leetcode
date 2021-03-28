@@ -1,6 +1,332 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_28
+
+//538. 把二叉搜索树转换为累加树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* convertBST(TreeNode* root) {
+		stack<TreeNode*> st;
+		TreeNode *cur = root;
+		int pre = 0;
+
+		while (cur != nullptr || !st.empty()) {
+
+			if (cur != nullptr) {
+				st.push(cur);
+				cur = cur->right;
+			}
+			else {
+				cur = st.top(); st.pop();
+				cur->val += pre;
+				pre = cur->val;
+				cur = cur->left;
+			}
+		}
+		return root;
+	}
+};
+
+//108. 将有序数组转换为二叉搜索树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode *Travelsal(vector<int>& nums, int left, int right) {
+		if (left > right) return nullptr;
+		int mid = left + (right - left) / 2;
+
+		TreeNode *root = new TreeNode(nums[mid]);
+
+		root->left = Travelsal(nums, left, mid - 1);
+		root->right = Travelsal(nums, mid + 1, right);
+
+		return root;
+	}
+	TreeNode* sortedArrayToBST(vector<int>& nums) {
+		TreeNode *root = Travelsal(nums, 0, nums.size() - 1);
+		return root;
+	}
+};
+
+//2021_3_27
+
+//669. 修剪二叉搜索树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* trimBST(TreeNode* root, int low, int high) {
+		if (root == NULL)  return NULL;
+
+		if (root->val < low) {
+			TreeNode *right = trimBST(root->right, low, high);
+			return right;
+		}
+		if (root->val > high) {
+			TreeNode *left = trimBST(root->left, low, high);
+			return left;
+		}
+		root->left = trimBST(root->left, low, high);
+		root->right = trimBST(root->right, low, high);
+
+		return root;
+	}
+};
+
+//450. 删除二叉搜索树中的节点
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* deleteNode(TreeNode* root, int key) {
+		if (root == NULL) return root;
+		if (root->val == key) {
+			if (root->left == NULL) return root->right;
+			else if (root->right == NULL) return root->left;
+			else {
+				TreeNode *cur = root->right;
+				while (cur->left != NULL) {
+					cur = cur->left;
+				}
+				cur->left = root->left;
+				TreeNode *tmp = root;
+				root = root->right;
+				delete tmp;
+				return root;
+			}
+		}
+		if (root->val > key) root->left = deleteNode(root->left, key);
+		if (root->val < key) root->right = deleteNode(root->right, key);
+
+		return root;
+	}
+};
+
+//701. 二叉搜索树中的插入操作
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* insertIntoBST(TreeNode* root, int val) {
+		if (root == NULL) {
+			TreeNode *node = new TreeNode(val);
+			return node;
+		}
+		TreeNode *cur = root;
+		TreeNode *parent = root;
+
+		while (cur != NULL) {
+			parent = cur;
+			if (cur->val < val) cur = cur->right;
+			else cur = cur->left;
+		}
+		TreeNode *node = new TreeNode(val);
+		if (parent->val > val) parent->left = node;
+		else parent->right = node;
+
+		return root;
+	}
+};
+
+//236. 二叉树的最近公共祖先
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+		if (root == p || root == q || root == NULL) return root;
+
+		TreeNode *left = lowestCommonAncestor(root->left, p, q);
+		TreeNode *right = lowestCommonAncestor(root->right, p, q);
+
+		if (left != NULL && right != NULL) return root;
+		else if (left == NULL && right != NULL) return right;
+		else if (left != NULL && right == NULL) return left;
+		else return NULL;
+	}
+};
+
+//501. 二叉搜索树中的众数
+*     TreeNode *right;
+*TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+*};
+*/
+class Solution {
+public:
+	vector<int> findMode(TreeNode* root) {
+		stack<TreeNode*> st;
+		vector<int> result;
+		TreeNode *pre = NULL;
+		TreeNode *cur = root;
+		int maxcount = 0;
+		int count = 0;
+
+		while (cur != NULL || !st.empty()) {
+
+			if (cur != NULL) {
+				st.push(cur);
+				cur = cur->left;
+			}
+			else{
+				cur = st.top(); st.pop();
+				if (pre == NULL) {
+					count = 1;
+				} //else if (pre != NULL || pre->val == cur->val) { //傻子
+				else if (pre->val == cur->val) {
+					count++;
+				}
+				else {
+					count = 1;
+				}
+				if (count == maxcount) {
+					result.push_back(cur->val);
+				}
+
+				if (count > maxcount) {
+					maxcount = count;
+					result.clear();
+					result.push_back(cur->val);
+				}
+				pre = cur;
+				cur = cur->right;
+			}
+		}
+		return result;
+	}
+};
+
+//530. 二叉搜索树的最小绝对差
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int getMinimumDifference(TreeNode* root) {
+		stack<TreeNode*> st;
+		TreeNode *cur = root;
+		TreeNode *pre = NULL;
+		int result = INT_MAX;
+
+		while (cur != NULL || !st.empty()) {
+
+			if (cur != NULL) {
+				st.push(cur);
+				cur = cur->left;
+			}
+			else {
+				cur = st.top(); st.pop();
+
+				if (pre != NULL) {
+					result = min(result, cur->val - pre->val);
+				}
+
+				pre = cur;
+				cur = cur->right;
+				//st.push(cur);
+			}
+		}
+		return result;
+	}
+};
+
+//61. 旋转链表
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode() : val(0), next(nullptr) {}
+*     ListNode(int x) : val(x), next(nullptr) {}
+*     ListNode(int x, ListNode *next) : val(x), next(next) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* rotateRight(ListNode* head, int k) {
+		if (k == 0 || head == NULL || head->next == NULL)
+			return head;
+		int len = 1;
+		ListNode *cur = head;
+		while (cur->next) {
+			cur = cur->next;
+			len++;
+		}
+		int index = len - k%len;
+		if (index == len)   return head;
+		cur->next = head;
+		while (index--) {
+			cur = cur->next;
+		}
+		ListNode *newcur = cur->next;
+		cur->next = NULL;
+		return newcur;
+	}
+};
+
 //2021_3_26
 
 //98. 验证二叉搜索树

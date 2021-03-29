@@ -1,10 +1,49 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_29
+
+//40. 组合总和 II
+class Solution {
+private:
+	vector<vector<int>> result;
+	vector<int> path;
+	void Trackbreaking(vector<int>& candidates, int target, int sum, int Startindex, vector<bool>& used) {
+		if (sum == target) {
+			result.push_back(path);
+			return;
+		}
+		for (int i = Startindex; i < candidates.size() && sum + candidates[i] <= target; ++i) {
+
+			if (i > 0 && candidates[i] == candidates[i - 1] && used[i - 1] == false) {
+				continue;
+			}
+			sum += candidates[i];
+			path.push_back(candidates[i]);
+			used[i] = true;
+			Trackbreaking(candidates, target, sum, i + 1, used);
+			used[i] = false;
+			sum -= candidates[i];
+			path.pop_back();
+		}
+	}
+public:
+	vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+
+		vector<bool> used(candidates.size(), false);
+
+		result.clear();
+		path.clear();
+		sort(candidates.begin(), candidates.end());
+		Trackbreaking(candidates, target, 0, 0, used);
+
+		return result;
+	}
+};
+
 //2021_3_28
 
 //39. 组合总和
-
 class Solution {
 public:
 	vector<vector<int>> result;

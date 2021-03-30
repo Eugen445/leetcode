@@ -1,6 +1,159 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_30
+
+//90. 子集 II
+class Solution {
+private:
+	vector<vector<int>> result;
+	vector<int> path;
+	void Trackbreaking(vector<int>& nums, int start_index, vector<bool>& used) {
+		result.push_back(path);
+
+		for (int i = start_index; i < nums.size(); ++i) {
+
+			if (i > 0 && nums[i] == nums[i - 1] && used[i - 1] == false) continue; //
+			path.push_back(nums[i]);
+			used[i] = true;
+			Trackbreaking(nums, i + 1, used);
+			used[i] = false;
+			path.pop_back();
+		}
+	}
+public:
+	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+		result.clear();
+		path.clear();
+		vector<bool> used(nums.size(), false);
+		sort(nums.begin(), nums.end());
+		Trackbreaking(nums, 0, used);
+
+		return result;
+	}
+};
+
+//78. 子集
+class Solution {
+private:
+	vector<vector<int>> result;
+	vector<int> path;
+	void Trackbreaking(vector<int>& nums, int start_index) {
+		result.push_back(path);
+
+		for (int i = start_index; i < nums.size(); i++) {
+			path.push_back(nums[i]);
+			Trackbreaking(nums, i + 1);
+			path.pop_back();
+		}
+	}
+public:
+	vector<vector<int>> subsets(vector<int>& nums) {
+		result.clear();
+		path.clear();
+		Trackbreaking(nums, 0);
+
+		return result;
+	}
+};
+
+//93. 复原 IP 地址
+class Solution {
+private:
+	vector<string> result;
+	void Trackbreaking(string &s, int start_index, int point_num) {
+
+		if (point_num == 3) {
+			if (isvalid(s, start_index, s.size() - 1)) {
+				result.push_back(s);
+			}
+			return;
+		}
+
+		for (int i = start_index; i < s.size(); i++) {
+
+			if (isvalid(s, start_index, i)) {
+				s.insert(s.begin() + i + 1, '.');
+				point_num++;
+				Trackbreaking(s, i + 2, point_num);
+				point_num--;
+				s.erase(s.begin() + i + 1);
+			}
+		}
+	}
+
+	bool isvalid(string& s, int start, int end) {
+
+		if (start > end) return false;
+		if (s[start] == '0' && start != end) return false;
+
+		int num = 0;
+		for (int i = start; i <= end; i++) {
+
+			if (s[i] > '9' || s[i] < '0') return false;
+			num = num * 10 + (s[i] - '0');
+			if (num > 255) return false;
+		}
+		return true;
+	}
+
+public:
+	vector<string> restoreIpAddresses(string s) {
+		result.clear();
+		Trackbreaking(s, 0, 0);
+
+		return result;
+	}
+};
+
+//131. 分割回文串
+class Solution {
+private:
+	vector<vector<string>> result;
+	vector<string> path;
+
+	void Trackbreaking(string &s, int Startindex) {
+
+		if (Startindex >= s.size()) {
+			result.push_back(path);
+			return;
+		}
+
+		for (int i = Startindex; i < s.size(); i++) {
+			if (isPalindrome(s, Startindex, i)) {
+
+				string str = s.substr(Startindex, i - Startindex + 1);
+				path.push_back(str);
+			}
+			else {
+				continue;
+			}
+			Trackbreaking(s, i + 1);
+			path.pop_back();
+		}
+
+	}
+
+	bool isPalindrome(const string& s, int start, int end) {
+		for (int i = start, j = end; i < j; ++i, --j) {
+			if (s[i] != s[j]) {
+				return false;
+			}
+		}
+		return true;
+	}
+public:
+	vector<vector<string>> partition(string s) {
+
+		result.clear();
+		path.clear();
+
+		Trackbreaking(s, 0);
+
+		return result;
+	}
+};
+
 //2021_3_29
 
 //40. 组合总和 II

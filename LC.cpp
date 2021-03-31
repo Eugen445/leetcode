@@ -1,6 +1,98 @@
 #include<iostream>
 using namespace std;
 
+//2021_3_31
+
+//134. 加油站
+class Solution {
+public:
+	int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+		int len_gas = gas.size();
+		for (int i = 0; i < len_gas; ++i) {
+			int rest = gas[i] - cost[i];
+			//int index = (index + 1)%len_gas;
+			int index = (i + 1) % len_gas;
+			while (rest > 0 && index != i) {
+				//rest = gas[index] - cost[index];
+				rest += gas[index] - cost[index];
+				index = (index + 1) % len_gas;
+			}
+			if (rest >= 0 && index == i) return i;
+		}
+		return -1;
+	}
+};
+
+//1005. K 次取反后最大化的数组和
+class Solution {
+	static bool cmp(int a, int b) {
+		return abs(a) > abs(b);
+	}
+public:
+	int largestSumAfterKNegations(vector<int>& A, int K) {
+		sort(A.begin(), A.end(), cmp);
+		int len_A = A.size();
+		for (int i = 0; i < len_A; ++i) {
+			if (A[i] < 0 && K > 0) {
+				A[i] *= -1;
+				K--;
+			}
+		}
+		while (K--) A[len_A - 1] *= -1;
+		int result = 0;
+		for (int a : A) result += a;
+		return result;
+	}
+};
+
+//45. 跳跃游戏 II
+class Solution {
+public:
+	int jump(vector<int>& nums) {
+		int len_nums = nums.size();
+		if (len_nums == 1) return 0;
+		int cur_distance = 0;
+		int next_distance = 0;
+		int count = 0;
+
+		for (int i = 0; i < len_nums - 1; ++i) { //下标减一
+			next_distance = max(nums[i] + i, next_distance);
+			if (i == cur_distance) {
+				count++;
+				cur_distance = next_distance;
+			}
+		}
+		return count;
+	}
+};
+
+//55. 跳跃游戏
+class Solution {
+public:
+	bool canJump(vector<int>& nums) {
+		int cover = 0;
+		if (nums.size() == 1) return true;
+		int len_nums = nums.size();
+		for (int i = 0; i <= cover; ++i) {
+			cover = max(i + nums[i], cover);
+			if (cover >= len_nums - 1) return true;
+		}
+		return false;
+	}
+};
+
+//122. 买卖股票的最佳时机 II
+class Solution {
+public:
+	int maxProfit(vector<int>& prices) {
+		int result = 0;
+		for (int i = 1; i < prices.size(); ++i) {
+			result += max((prices[i] - prices[i - 1]), 0);
+		}
+		return result;
+	}
+};
+
 //2021_3_30
 
 //90. 子集 II

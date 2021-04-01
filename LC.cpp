@@ -1,6 +1,136 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_1
+
+//343. 整数拆分
+class Solution {
+public:
+	int integerBreak(int n) { //动态规划
+		vector<int> dp(n + 1);
+		dp[2] = 1;
+		for (int i = 3; i <= n; ++i) {
+			for (int j = 1; j < i - 1; ++j) {//为什么要小于i - 1
+				//j < i - 1 是因为取到 j = i - 1和 1两个正整数和j = 1，i = i - 1重了 //不用在写一遍//写了也不影响结果
+				dp[i] = max(dp[i], max((i - j) * j, dp[i - j] * j)); //为什么这样写？
+				//dp[i - j]其实就是已经拆分好的i - j 的最大值了
+				//因为第三个中 i - j 的变小，其实就是展示 i - j 值的最优解的过程，只需乘j就可以了不需要在分解j了
+				//第二个我不太理解//暂时个人认为是在i的值小的时候，先找出最有分割方案，以便i变大了使用
+				//感觉后面全是第三个在分解了
+				//在dp[7]的时候第二个和第三个的最大值已经持平
+				//在dp[8]是第三个式子站主要地位了
+				//在dp[9]的时候完全靠第三个
+				//在dp[10]的时候完全靠第三个
+				//总结第二个式子只在7和7之前起作用，后面靠第三个式子
+			}
+		}
+		return dp[n];
+	}
+};
+
+//63. 不同路径 II
+class Solution {
+public:
+	int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+		int m = obstacleGrid.size();
+		int n = obstacleGrid[0].size();
+		vector<vector<int>> dp(m, vector<int>(n, 0));
+		for (int i = 0; i < m && obstacleGrid[i][0] == 0; ++i) dp[i][0] = 1; //遇到障碍直接不用计数
+		for (int j = 0; j < n && obstacleGrid[0][j] == 0; ++j) dp[0][j] = 1; //遇到障碍直接不用计数
+		for (int i = 1; i < m; ++i) {
+			for (int j = 1; j < n; ++j) {
+				if (obstacleGrid[i][j] == 1) continue; //跳过意味着这个位置的方法有0种
+				dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+			}
+		}
+		return dp[m - 1][n - 1];
+	}
+};
+
+//62. 不同路径
+// class Solution {
+// public:
+//     int uniquePaths(int m, int n) {
+//         vector<vector<int>> dp(m, vector<int>(n, 0));
+//         for (int i = 0; i < m; ++i) dp[i][0] = 1;
+//         for (int j = 0; j < n; ++j) dp[0][j] = 1;
+
+//         for (int i = 1; i < m; ++i) {
+//             for (int j = 1; j < m; ++j){
+//                 dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+//             }
+//         }
+//         return dp[m - 1][n - 1];
+//     }
+// };//找出错误
+class Solution {
+public:
+	int uniquePaths(int m, int n) {
+		vector<vector<int>> dp(m, vector<int>(n, 0));
+		for (int i = 0; i < m; ++i) dp[i][0] = 1;
+		for (int j = 0; j < n; ++j) dp[0][j] = 1;
+
+		for (int i = 1; i < m; ++i) {
+			for (int j = 1; j < n; ++j){
+				dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+			}
+		}
+		return dp[m - 1][n - 1];
+	}
+};
+
+
+//746. 使用最小花费爬楼梯
+class Solution {
+public:
+	int minCostClimbingStairs(vector<int>& cost) {
+		vector<int> dp(cost.size() + 1);
+		dp[0] = cost[0];
+		dp[1] = cost[1];
+
+		int len_cost = cost.size();
+		for (int i = 2; i < len_cost; ++i) { //最后一次到达不计费
+			dp[i] = min(dp[i - 1], dp[i - 2]) + cost[i];
+		}
+		//return dp[len_cost];
+		return min(dp[len_cost - 1], dp[len_cost - 2]); //最后一步是不用计费的
+	}
+};
+
+//70. 爬楼梯
+class Solution {
+public:
+	int climbStairs(int n) {
+		if (n <= 2) return n;
+		vector<int> dp(n + 1);
+		dp[1] = 1;//0层不太符合现实
+		dp[2] = 2;
+		for (int i = 3; i <= n; ++i) {
+			dp[i] = dp[i - 1] + dp[i - 2];
+		}
+		return dp[n];
+	}
+};
+
+//509. 斐波那契数
+class Solution {
+public:
+	int fib(int N) {
+		if (N <= 1) return N;
+		int dp[2];
+		dp[0] = 0;
+		dp[1] = 1;
+		int sum = 0;
+		for (int i = 2; i <= N; ++i) {
+			sum = dp[1] + dp[0];
+			dp[0] = dp[1];
+			dp[1] = sum;
+		}
+		return dp[1];
+	}
+};
+
+
 //2021_3_31
 
 //134. 加油站

@@ -3,6 +3,413 @@ using namespace std;
 
 //2021_4_1
 
+//416. 分割等和子集
+class Solution {
+public:
+	bool canPartition(vector<int>& nums) {
+		int sum = 0;
+		vector<int> dp(10001, 0);
+		int size_nums = nums.size();
+		for (int i = 0; i < size_nums; ++i)
+			sum += nums[i];
+		//if (sum/2 == 1) return false;
+		if (sum % 2 == 1) return false;
+		int target = sum / 2;
+		for (int i = 0; i < size_nums; ++i)
+		for (int j = target; j >= nums[i]; --j)
+			dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]);
+		if (dp[target] == target) return true;
+		return false;
+	}
+};
+
+//面试题 17.21. 直方图的水量
+class Solution {
+public:
+	int trap(vector<int>& height) {
+		if (height.size() <= 2) return 0;
+		vector<int> max_left(height.size(), 0);
+		vector<int> max_right(height.size(), 0);
+		int size = height.size();
+
+		max_left[0] = height[0];
+		for (int i = 1; i < size; ++i)
+			max_left[i] = max(height[i], max_left[i - 1]);
+
+		max_right[size - 1] = height[size - 1];
+		for (int i = size - 2; i >= 0; --i)
+			max_right[i] = max(height[i], max_right[i + 1]);
+
+		int sum = 0;
+		for (int i = 0; i < size; ++i) {
+			int count = min(max_left[i], max_right[i]) - height[i];
+			if (count > 0) sum += count;
+		}
+		return sum;
+	}
+};
+
+class Solution {
+public:
+	int trap(vector<int>& height) {
+		int sum = 0;
+		int len = height.size();
+		for (int i = 0; i < len; ++i) {
+			if (i == 0 || i == len - 1) continue;
+			int r_height = height[i];
+			int l_height = height[i];
+			for (int r = i + 1; r < len; ++r)
+			if (height[r] > r_height) r_height = height[r];
+			for (int l = i - 1; l >= 0; --l)
+			if (height[l] > l_height) l_height = height[l];
+			int h = min(l_height, r_height) - height[i];
+			if (h > 0) sum += h;
+		}
+		return sum;
+	}
+};
+
+
+//面试题 08.03. 魔术索引
+class Solution {
+public:
+	int findMagicIndex(vector<int>& nums) {
+		int left = 0;
+		int right = nums.size() - 1;
+		sort(nums.begin(), nums.end());
+		while (left <= right) {
+			int mid = left + (right - left) / 2;
+			if (nums[mid] > mid) right = mid - 1;
+			else if (nums[mid] < mid) left = mid + 1;
+			return mid;
+		}
+		return -1;
+	}
+};
+
+//面试题 02.07. 链表相交
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+
+		if (!headA || !headB) return nullptr; //忘记判定空链表了
+
+		ListNode* curA_B = headA;
+		ListNode* curB_A = headB;
+
+		while (curA_B || curB_A) {
+
+			if (curA_B == nullptr) curA_B = headB;
+			if (curB_A == nullptr) curB_A = headA;
+			if (curA_B == curB_A) return curA_B;
+			curA_B = curA_B->next;
+			curB_A = curB_A->next;
+		}
+		return nullptr;
+	}
+};
+
+//面试题 05.07. 配对交换
+class Solution {
+public:
+	int exchangeBits(int num) {
+		int even = (num & 0xaaaaaaaa) >> 1;
+		int odd = (num & 0x55555555) << 1;
+		return even | odd;
+	}
+};
+
+//面试题 03.04. 化栈为队
+class MyQueue {
+private:
+	stack<int> st1;
+	stack<int> st2;
+public:
+	/** Initialize your data structure here. */
+	MyQueue() {
+
+	}
+
+	/** Push element x to the back of queue. */
+	void push(int x) {
+		st1.push(x);
+	}
+
+	/** Removes the element from in front of queue and returns that element. */
+	int pop() {
+		if (st2.empty()) {
+			while (!st1.empty()) { st2.push(st1.top()); st1.pop(); }
+		}
+		int res = st2.top(); st2.pop();
+		return res;
+	}
+
+	/** Get the front element. */
+	int peek() {
+		if (st2.empty()) {
+			while (!st1.empty()) { st2.push(st1.top()); st1.pop(); }
+		}
+		return st2.top();
+	}
+
+	/** Returns whether the queue is empty. */
+	bool empty() {
+		return st1.empty() && st2.empty();
+	}
+};
+
+/**
+* Your MyQueue object will be instantiated and called as such:
+* MyQueue* obj = new MyQueue();
+* obj->push(x);
+* int param_2 = obj->pop();
+* int param_3 = obj->peek();
+* bool param_4 = obj->empty();
+*/
+
+
+//面试题 01.01. 判定字符是否唯一
+class Solution {
+public:
+	bool isUnique(string astr) {
+		sort(astr.begin(), astr.end());
+		int len = astr.size();
+		for (int i = 0; i < len - 1; ++i) {
+			if (astr[i] == astr[i + 1]) return false;
+		}
+		return true;
+	}
+};
+
+class Solution {
+public:
+	bool isUnique(string astr) {
+		int len = astr.size();
+		for (int i = 0; i < len; ++i) {
+			for (int j = i + 1; j < len; ++j) {
+				if (astr[i] == astr[j]) return false;
+			}
+		}
+		return true;
+	}
+};
+
+
+//面试题 02.02. 返回倒数第 k 个节点
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	int kthToLast(ListNode* head, int k) {
+
+		ListNode* p = head;
+		ListNode* q = head;
+		while (k--) p = p->next;
+		while (p) p = p->next, q = q->next;
+
+		return q->val;
+	}
+};
+
+//面试题 04.02. 最小高度树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+private:
+	TreeNode* S_A_BST(vector<int>& nums, int left, int right) {
+		if (left >= right) return nullptr;
+		int mid = left + (right - left) / 2;
+		TreeNode* root = new TreeNode(nums[mid]);
+		root->left = S_A_BST(nums, left, mid);
+		root->right = S_A_BST(nums, mid + 1, right);
+
+		return root;
+	}
+public:
+	TreeNode* sortedArrayToBST(vector<int>& nums) {
+		return S_A_BST(nums, 0, nums.size()); //左闭右开区间
+	}
+};
+
+//面试题 02.03. 删除中间节点
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	void deleteNode(ListNode* node) {
+		node->val = node->next->val;
+		node->next = node->next->next;
+	}
+};
+
+//654. 最大二叉树
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+private:
+	TreeNode* con_max_BT(vector<int>& nums, int left, int right) {
+		if (left == right) return nullptr;
+		//if (left >= right) return nullptr;//都可以//这个保险点
+
+		int maxindex = left;
+		for (int i = left + 1; i < right; ++i) {
+			if (nums[i] > nums[maxindex]) maxindex = i;
+		}
+		TreeNode* root = new TreeNode(nums[maxindex]);
+		root->left = con_max_BT(nums, left, maxindex);
+		root->right = con_max_BT(nums, maxindex + 1, right);
+
+		return root;
+	}
+public:
+	TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+		return con_max_BT(nums, 0, nums.size());
+	}
+};
+
+//面试题 04.03. 特定深度节点链表
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode(int x) : val(x), next(NULL) {}
+* };
+*/
+class Solution {
+public:
+	vector<ListNode*> listOfDepth(TreeNode* tree) {
+		vector<ListNode*> res;
+		queue<TreeNode*> que;
+		if (tree != nullptr) que.push(tree);
+
+		ListNode dummyNode(0);
+		while (!que.empty()) {
+
+			int size = que.size();
+			ListNode *tmp = &dummyNode;
+
+			for (int i = 0; i < size; ++i) {
+
+				TreeNode *cur = que.front(); que.pop();
+				if (cur->left) que.push(cur->left);
+				if (cur->right) que.push(cur->right);
+				tmp->next = new ListNode(cur->val);
+				tmp = tmp->next;
+			}
+			res.push_back(dummyNode.next);
+		}
+		return res;
+	}
+};
+
+//剑指 Offer 26. 树的子结构
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+private:
+	bool is_same(TreeNode* A, TreeNode* B) {
+
+		if (B == nullptr) return true; //B被匹配完了 
+		if (A == nullptr) return false; //A被匹配完，而B却还有节点
+		if (A->val != B->val) return false;
+
+		return  is_same(A->left, B->left) && is_same(A->right, B->right);
+	}
+public:
+	bool isSubStructure(TreeNode* A, TreeNode* B) {
+
+		if (A == nullptr || B == nullptr) return false;
+		bool res = false;
+		if (A->val == B->val) res = is_same(A, B); //值相等才回去判断是否为子结构
+		if (!res) res = isSubStructure(A->left, B);
+		if (!res) res = isSubStructure(A->right, B);
+
+		return res;
+	}
+};
+
+//1006. 笨阶乘
+class Solution {
+public:
+	int clumsy(int N) {
+		if (N == 1) {
+			return 1;
+		}
+		else if (N == 2) {
+			return 2;
+		}
+		else if (N == 3) {
+			return 6;
+		}
+		else if (N == 4) {
+			return 7;
+		}
+
+		if (N % 4 == 0) {
+			return N + 1;
+		}
+		else if (N % 4 <= 2) {
+			return N + 2;
+		}
+		else {
+			return N - 1;
+		}
+	}
+};
+
 //343. 整数拆分
 class Solution {
 public:

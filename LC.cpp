@@ -1,6 +1,56 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_3
+
+//1143. 最长公共子序列
+class Solution {
+public:
+	int longestCommonSubsequence(string text1, string text2) {
+		vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0));
+		int text1_size = text1.size();
+		int text2_size = text2.size();
+		for (int i = 1; i <= text1_size; ++i) { //=忘了
+			for (int j = 1; j <= text2_size; ++j) {
+				if (text1[i - 1] == text2[j - 1]) {
+					dp[i][j] = dp[i - 1][j - 1] + 1;
+				}
+				else {
+					dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+				}
+			}
+		}
+		return dp[text1_size][text2_size];
+	}
+};
+
+//2021_4_2
+
+//剑指 Offer 27. 二叉树的镜像
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+private:
+	void mirror_tree(TreeNode* root) {
+		if (root == nullptr) return;
+		swap(root->left, root->right);
+		mirrorTree(root->left);
+		mirrorTree(root->right);
+	}
+public:
+	TreeNode* mirrorTree(TreeNode* root) {
+		mirror_tree(root);
+		return root;
+	}
+};
+
 //2021_4_1
 
 //416. 分割等和子集

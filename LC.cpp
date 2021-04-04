@@ -1,6 +1,88 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_4
+
+//70. 爬楼梯
+class Solution {
+public:
+	int climbStairs(int n) { //完全背包问题
+		vector<int> dp(n + 1, 0);
+		dp[0] = 1;
+		for (int i = 1; i <= n; ++i) {
+			for (int j = 1; j <= 2; ++j) { //2可以换成m
+				if (i - j >= 0) dp[i] += dp[i - j];
+			}
+		}
+		return dp[n];
+	}
+};
+
+//377. 组合总和 Ⅳ
+class Solution {
+public:
+	int combinationSum4(vector<int>& nums, int target) {
+		vector<int> dp(target + 1, 0);
+		dp[0] = 1;
+		for (int i = 0; i <= target; ++i) {
+			for (int j = 0; j < nums.size(); ++j) {
+				if (i - nums[j] >= 0 && dp[i] < INT_MAX - dp[i - nums[j]]) { //会有dp的可能性大于int范围的情况出现
+					dp[i] += dp[i - nums[j]];
+				}
+			}
+		}
+		return dp[target];
+	}
+};
+
+//518. 零钱兑换 II
+class Solution {
+public:
+	int change(int amount, vector<int>& coins) {
+		vector<int> dp(amount + 1, 0);
+		dp[0] = 1;
+		for (int i = 0; i < coins.size(); ++i) {
+			for (int j = coins[i]; j <= amount; ++j) {
+				dp[j] += dp[j - coins[i]];
+			}
+		}
+		return dp[amount];
+	}
+};
+
+//781. 森林中的兔子
+class Solution {
+public:
+	int numRabbits(vector<int>& answers) {
+		if (answers.size() == 0) return 0;
+		vector<int> dp(answers.size(), 0);
+		sort(answers.begin(), answers.end());
+		dp[0] = answers[0] + 1;
+		//下一次看是，思考下第一次提交的初始化是否能够增加容错
+
+		int count = 0; //计数器
+		for (int i = 1; i < answers.size(); ++i) {
+			if (answers[i] > answers[i - 1]) {
+				dp[i] = dp[i - 1] + answers[i] + 1;
+				count = 0;
+			}
+			else{
+				//
+				count++;
+				if (count <= answers[i]) {
+					//count++;//位置写错了
+					dp[i] = dp[i - 1];
+				}
+				else {
+					count = 0;
+					dp[i] = dp[i - 1] + answers[i] + 1;
+				}
+			}
+		}
+		return dp[answers.size() - 1];
+	}
+};
+
 //2021_4_3
 
 //剑指 Offer 64. 求1+2+…+n

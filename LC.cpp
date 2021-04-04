@@ -3,6 +3,125 @@ using namespace std;
 
 //2021_4_3
 
+//剑指 Offer 64. 求1+2+…+n
+class Solution {
+public:
+	int sumNums(int n) {
+		bool aha[n][n + 1];
+		return sizeof(aha) >> 1;
+	}
+};
+
+//面试题 17.12. BiNode
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+private:
+	TreeNode* dummy = new TreeNode(0);
+	TreeNode* cur = dummy;
+	void sort(TreeNode* root) {
+		if (root == nullptr) return;
+		sort(root->left);
+		root->left = nullptr;
+		cur->right = root;
+		cur = root;
+		sort(root->right);
+	}
+public:
+	TreeNode* convertBiNode(TreeNode* root) {
+		sort(root);
+		return dummy->right;
+	}
+};
+
+//面试题 08.01. 三步问题
+class Solution {
+public:
+	int waysToStep(int n) {
+		if (n < 3) return n;
+		vector<size_t> dp(n + 1, 0);
+		dp[0] = 1;
+		dp[1] = 1;
+		dp[2] = 2;
+		for (int i = 3; i <= n; ++i) {
+			dp[i] = dp[i - 1] % 1000000007 + dp[i - 2] % 1000000007 + dp[i - 3] % 1000000007;
+		}
+		return dp[n] % 1000000007;
+	}
+};
+
+//面试题 01.02. 判定是否互为字符重排
+class Solution {
+public:
+	bool CheckPermutation(string s1, string s2) {
+		sort(s1.begin(), s1.end());
+		sort(s2.begin(), s2.end());
+		for (int i = 0; i < s2.size(); ++i) {
+			if (s1[i] != s2[i]) return false;
+		}
+		return true;
+	}
+};
+
+//面试题 17.04. 消失的数字
+class Solution {
+public:
+	int missingNumber(vector<int>& nums) {
+		int res = 0;
+		for (int i = 1; i <= nums.size(); ++i) {
+			res ^= nums[i - 1];
+			res ^= i;
+		}
+		return res;
+	}
+};
+
+//494. 目标和
+class Solution {
+public:
+	int findTargetSumWays(vector<int>& nums, int S) {
+		int sum = 0;
+		for (int i = 0; i < nums.size(); ++i) sum += nums[i];
+		if (sum < S) return 0;
+		//if ((sum + S) / 2 == 1) return 0;
+		if ((sum + S) % 2 == 1) return 0;
+		int bag_size = (sum + S) / 2;
+		vector<int> dp(bag_size + 1, 0);
+		dp[0] = 1;
+		for (int i = 0; i < nums.size(); ++i) {
+			//for (int j = bag_size; j>=0; j--) {
+			for (int j = bag_size; j >= nums[i]; j--) {
+				dp[j] += dp[j - nums[i]];
+			}
+		}
+		return dp[bag_size];
+	}
+};
+
+//1049. 最后一块石头的重量 II
+class Solution {
+public:
+	int lastStoneWeightII(vector<int>& stones) {
+		vector<int> dp(15001, 0);
+		int sum = 0;
+		for (int i = 0; i < stones.size(); ++i) sum += stones[i];
+		int target = sum / 2;
+		for (int i = 0; i < stones.size(); ++i) {
+			for (int j = target; j >= stones[i]; --j) {
+				dp[j] = max(dp[j], dp[j - stones[i]] + stones[i]);
+			}
+		}
+		return sum - dp[target] - dp[target];
+	}
+};
+
 //1143. 最长公共子序列
 class Solution {
 public:

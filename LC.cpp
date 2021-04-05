@@ -3,6 +3,117 @@ using namespace std;
 
 //2021_4_5
 
+//4. 寻找两个正序数组的中位数
+class Solution {
+public:
+	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+		if (nums1.size() == 0) {
+			double res = 0;
+			int left = 0, right = nums2.size() - 1;
+			if (nums2.size() % 2 == 1) return res = nums2[(left + right) / 2];
+			int mid = (left + right) / 2;
+			res = ((double)nums2[mid] + (double)nums2[mid + 1]) / 2;
+			return res;
+		}
+		if (nums2.size() == 0) {
+			double res = 0;
+			int left = 0, right = nums1.size() - 1;
+			if (nums1.size() % 2 == 1) return res = nums1[(left + right) / 2];
+			int mid = (left + right) / 2;
+			res = ((double)nums1[mid] + (double)nums1[mid + 1]) / 2;
+			return res;
+		}
+		vector<double> nums3(nums1.size() + nums2.size(), 0);
+		int i = 0;
+		double s1 = 0, s2 = 0;
+		while (s1 < nums1.size() || s2 < nums2.size()) {
+			if (s1 < nums1.size() && s2 == nums2.size()) nums3[i++] = nums1[s1++];
+			else if (s1 == nums1.size() && s2 < nums2.size()) nums3[i++] = nums2[s2++];
+			else if (nums1[s1] < nums2[s2]) nums3[i++] = nums1[s1++];
+			else nums3[i++] = nums2[s2++];
+		}
+		int left = 0, right = nums3.size() - 1;
+		if (nums3.size() % 2 == 1) return nums3[(left + right) / 2];
+
+		int mid = (left + right) / 2;
+		double res = (nums3[mid] + nums3[mid + 1]) / 2;
+		return res;
+	}
+};
+
+//3. 无重复字符的最长子串
+class Solution {
+public:
+	int lengthOfLongestSubstring(string s) {
+		if (s.size() == 0) return 0;
+		unordered_set<char> slide;
+		int max_str = 0;
+		int left = 0;
+		for (int i = 0; i < s.size(); ++i) {
+			while (slide.find(s[i]) != slide.end()) {
+				slide.erase(s[left]);
+				left++;
+			}
+			max_str = max(max_str, i - left + 1);
+			slide.insert(s[i]);
+		}
+		return max_str;
+	}
+};
+
+//2. 两数相加
+/**
+* Definition for singly-linked list.
+* struct ListNode {
+*     int val;
+*     ListNode *next;
+*     ListNode() : val(0), next(nullptr) {}
+*     ListNode(int x) : val(x), next(nullptr) {}
+*     ListNode(int x, ListNode *next) : val(x), next(next) {}
+* };
+*/
+class Solution {
+public:
+	ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+		ListNode *head = nullptr, *tail = nullptr; //格式
+		int carry = 0; //解决第一次
+		while (l1 || l2) {
+			int v1 = l1 ? l1->val : 0;
+			int v2 = l2 ? l2->val : 0;
+			int sum = v1 + v2 + carry;
+			if (!head) {
+				head = tail = new ListNode(sum % 10);
+			}
+			else {
+				tail->next = new ListNode(sum % 10);
+				tail = tail->next;
+				//carry = sum / 10; //位置不对
+			}
+			carry = sum / 10;
+			if (l1) l1 = l1->next;
+			if (l2) l2 = l2->next;
+		}
+		if (carry >= 1) tail->next = new ListNode(carry);
+		return head;
+	}
+};
+
+//198. 打家劫舍
+class Solution {
+public:
+	int rob(vector<int>& nums) {
+		if (nums.size() == 0) return 0;
+		if (nums.size() == 1) return nums[0];
+		vector<int> dp(nums.size(), 0);
+		dp[0] = nums[0];
+		dp[1] = max(nums[1], nums[0]);
+		for (int i = 2; i < nums.size(); ++i) {
+			dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);
+		}
+		return dp[nums.size() - 1];
+	}
+};
+
 //279. 完全平方数
 class Solution {
 public:

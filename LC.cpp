@@ -1,6 +1,47 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_5
+
+//279. 完全平方数
+class Solution {
+public:
+	int numSquares(int n) {
+		vector<int> dp(n + 1, INT_MAX);
+		dp[0] = 0;
+		dp[1] = 1;
+		//for (int i = 1; i < n/2; ++i) {//忽略了1
+		for (int i = 1; i <= n / 2; ++i) {//这个地方写<=n就不需要对n做特殊处了
+			int tmp = i * i;
+			for (int j = tmp; j <= n; ++j) {
+				if (dp[j - tmp] != INT_MAX) {
+					dp[j] = min(dp[j], dp[j - tmp] + 1);
+				}
+			}
+		}
+		if (dp[n] == INT_MAX) return -1;
+		return dp[n];
+	}
+};
+
+//322. 零钱兑换
+class Solution {
+public:
+	int coinChange(vector<int>& coins, int amount) {
+		vector<int> dp(amount + 1, INT_MAX);
+		dp[0] = 0;
+		for (int i = 0; i < coins.size(); ++i) { //先遍历物品
+			for (int j = coins[i]; j <= amount; ++j) {
+				if (dp[j - coins[i]] != INT_MAX) {
+					dp[j] = min(dp[j], dp[j - coins[i]] + 1);
+				}
+			}
+		}
+		if (dp[amount] == INT_MAX) return -1;
+		return dp[amount];
+	}
+};
+
 //2021_4_4
 
 //70. 爬楼梯

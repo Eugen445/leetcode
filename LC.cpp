@@ -1,6 +1,87 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_6
+
+//162. 寻找峰值
+class Solution {
+public:
+	int findPeakElement(vector<int>& nums) {//左侧边界的二分搜索
+
+		if (nums.size() == 1) return 0;
+		if (nums[0] > nums[1]) return 0;
+		if (nums[nums.size() - 1] > nums[nums.size() - 2]) return nums.size() - 1;
+
+		int left = 1, right = nums.size() - 1;
+		while (left < right) {
+			int mid = (right - left) / 2 + left;
+			if (nums[mid] > nums[mid + 1] && nums[mid] > nums[mid - 1]) return mid;
+			else if (nums[mid] > nums[mid + 1]) right = mid;
+			else if (nums[mid] < nums[mid + 1]) left = mid + 1;
+		}
+		return left;
+	}
+};
+
+//121. 买卖股票的最佳时机
+class Solution {
+public:
+	int maxProfit(vector<int>& prices) {
+		int len = prices.size();
+		vector<vector<int>> dp(len, vector<int>(2));
+		dp[0][0] = -prices[0];
+		dp[0][1] = 0;
+		for (int i = 1; i < len; ++i) {
+			dp[i][0] = max(dp[i - 1][0], -prices[i]);//再卖出之前的最优值
+			//dp[i][1] = max(dp[i - 1][1], dp[i - 1][1] + prices[i]);
+			dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i]);
+		}
+		return dp[len - 1][1];
+	}
+};
+
+//213. 打家劫舍 II
+class Solution {
+public:
+	int rob(vector<int>& nums) {
+		if (nums.size() == 0) return 0;
+		if (nums.size() == 1) return nums[0];
+		int result1 = robRange(nums, 0, nums.size() - 2);
+		int result2 = robRange(nums, 1, nums.size() - 1);
+		return max(result1, result2);
+	}
+
+	int robRange(vector<int>& nums, int start, int end) {
+		if (end == start) return nums[start];
+		vector<int> dp(nums.size());
+		dp[start] = nums[start];
+		dp[start + 1] = max(nums[start + 1], nums[start]);
+		for (int i = start + 2; i <= end; ++i) {
+			dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);
+		}
+		return dp[end];
+	}
+};
+
+//80. 删除有序数组中的重复项 II
+class Solution {
+public:
+	int removeDuplicates(vector<int>& nums) {
+
+		if (nums.size() <= 2) return nums.size();
+
+		int slow = 2, fast = 2;
+		while (fast < nums.size()) {
+			if (nums[slow - 2] != nums[fast]) {
+				nums[slow] = nums[fast];
+				slow++;
+			}
+			fast++;
+		}
+		return slow;
+	}
+};
+
 //2021_4_5
 
 //4. 寻找两个正序数组的中位数

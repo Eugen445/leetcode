@@ -1,7 +1,158 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_7
+
+//class Solution {
+public:
+	bool searchMatrix(vector<vector<int>>& matrix, int target) { //一次二分查找
+		int row = matrix.size(), col = matrix[0].size();
+		int left = 0, right = row * col - 1;
+		while (left < right) { //不写等号
+			int mid = (left + right) / 2;
+			if (matrix[mid / col][mid % col] == target) return true;
+			else if (matrix[mid / col][mid % col] > target) right = mid - 1;
+			else if (matrix[mid / col][mid % col] < target) left = mid + 1;
+		}
+		return matrix[left / col][left % col] == target;
+	}
+};
+
+class Solution {
+public:
+	bool searchMatrix(vector<vector<int>>& matrix, int target) {
+		const int row = matrix.size(), col = matrix[0].size() - 1;
+		for (int i = 0; i < row; ++i) {
+			if (target > matrix[i][col]) continue;
+			auto it = find(matrix[i].begin(), matrix[i].end(), target);
+			return it != matrix[i].end();
+		}
+		return false;
+	}
+};
+
+
+
+//面试题 08.03. 魔术索引
+class Solution {
+public:
+	int getMagicIndex(vector<int> &nums, int left, int right) {
+
+		if (left > right) //左闭右开区间 //画图理理
+			return -1; //没找到
+
+		int mid = (left + right) / 2; //如果不考虑溢出不用(right - left) / 2 + left 这样写
+		int leftIndex = getMagicIndex(nums, left, mid - 1);
+		if (leftIndex != -1) return leftIndex; //在左边找到
+		else if (nums[mid] == mid) return mid; //判断中间值
+		return getMagicIndex(nums, mid + 1, right);
+
+	}
+	int findMagicIndex(vector<int>& nums) {
+		return getMagicIndex(nums, 0, nums.size() - 1);
+	}
+};
+
+//33. 搜索旋转排序数组
+class Solution {
+public:
+	int search(vector<int>& nums, int target) {
+		if (nums.empty()) return -1;
+		if (nums.size() == 1) return nums[0] == target ? 0 : -1;
+		int l = 0, r = nums.size() - 1;
+		while (l <= r) {
+			int m = (l + r) / 2;
+			if (nums[m] == target) return m;
+			else if (nums[l] <= nums[m]) { // =号  // [3,1]  1的情况
+				if (nums[l] <= target && nums[m] > target) r = m - 1; //= 号
+				else l = m + 1;
+			}
+			else {
+				if (nums[m] < target && nums[nums.size() - 1] >= target) l = m + 1; // =号 
+				else r = m - 1;
+			}
+		}
+		return -1;
+	}
+};
+
+//81. 搜索旋转排序数组 II
+class Solution {
+public:
+	bool search(vector<int>& nums, int target) {
+		if (nums.size() == 0) return false;
+		if (nums.size() == 1) return nums[0] == target;
+		int left = 0, right = nums.size() - 1;
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (nums[mid] == target) return true;
+			if (nums[left] == nums[mid] && nums[mid] == nums[right]) left++, right--;
+			else if (nums[left] <= nums[mid]) {
+				if (nums[left] <= target && target < nums[mid]) right = mid - 1;
+				else left = mid + 1;
+			}
+			else {
+				if (nums[mid] < target && target <= nums[nums.size() - 1]) left = mid + 1;
+				else right = mid - 1;
+			}
+		}
+		return false;
+	}
+};
+
 //2021_4_6
+
+//1095. 山脉数组中查找目标值
+/**
+* // This is the MountainArray's API interface.
+* // You should not implement it, or speculate about its implementation
+* class MountainArray {
+*   public:
+*     int get(int index);
+*     int length();
+* };
+*/
+
+class Solution {
+public:
+	int findPeak(MountainArray &mountainArr) {
+		int n = mountainArr.length();
+		int left = 0, right = n - 1;
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (mountainArr.get(mid) > mountainArr.get(mid + 1)) right = mid - 1;
+			else left = mid + 1;
+		}
+		return left;
+	}
+
+	int findLeft(MountainArray &mountainArr, int left, int right, int target) {
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (mountainArr.get(mid) > target) right = mid - 1;
+			else if (mountainArr.get(mid) < target) left = mid + 1;
+			else return mid;
+		}
+		return -1;
+	}
+	int findRight(MountainArray &mountainArr, int left, int right, int target) {
+		while (left <= right) {
+			int mid = (left + right) / 2;
+			if (mountainArr.get(mid) > target) left = mid + 1;
+			else if (mountainArr.get(mid) < target) right = mid - 1;
+			else return mid;
+		}
+		return -1;
+	}
+	int findInMountainArray(int target, MountainArray &mountainArr) {
+		int peak = findPeak(mountainArr);
+		if (mountainArr.get(peak) == target) return peak;
+		int leftIndex = findLeft(mountainArr, 0, peak - 1, target);
+		if (leftIndex != -1) return leftIndex;
+		int rightIndex = findRight(mountainArr, peak + 1, mountainArr.length() - 1, target);
+		return rightIndex;
+	}
+};
 
 //162. 寻找峰值
 class Solution {

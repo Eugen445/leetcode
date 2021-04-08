@@ -1,6 +1,181 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_8
+
+//674. 最长连续递增序列
+class Solution {
+public:
+	int findLengthOfLCIS(vector<int>& nums) {
+		if (nums.size() == 0) return 0;
+		vector<int> dp(nums.size(), 1);
+		int res = 1;
+		for (int i = 0; i < nums.size() - 1; ++i) {
+			if (nums[i + 1] > nums[i]) dp[i + 1] = dp[i] + 1;
+			if (dp[i + 1] > res) res = dp[i + 1];
+		}
+		return res;
+	}
+};
+
+//300. 最长递增子序列
+class Solution {
+public:
+	int lengthOfLIS(vector<int>& nums) {
+		if (nums.size() <= 1) return nums.size();
+		vector<int> dp(nums.size(), 1);
+		int res = 0;
+		for (int i = 1; i < nums.size(); ++i) {
+			for (int j = 0; j < i; ++j) {
+				if (nums[i] > nums[j]) dp[i] = max(dp[i], dp[j] + 1);
+			}
+			if (dp[i] > res) res = dp[i];
+		}
+		return res;
+	}
+};
+
+//714. 买卖股票的最佳时机含手续费
+class Solution {
+public:
+	int maxProfit(vector<int>& prices, int fee) {
+		vector<vector<int>> dp(prices.size(), vector<int>(2, 0));
+		dp[0][0] = -prices[0];
+		for (int i = 1; i < prices.size(); ++i) {
+			dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);
+			dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + prices[i] - fee);
+		}
+		return max(dp[prices.size() - 1][0], dp[prices.size() - 1][1]);
+	}
+};
+
+//188. 买卖股票的最佳时机 IV
+class Solution {
+public:
+	int maxProfit(int k, vector<int>& prices) {
+		if (prices.size() == 0) return 0;
+		vector<vector<int>> dp(prices.size(), vector<int>(2 * k + 1, 0));
+		for (int j = 1; j < 2 * k; j += 2)
+			dp[0][j] = -prices[0];
+
+		for (int i = 1; i < prices.size(); ++i)
+		for (int j = 0; j < 2 * k - 1; j += 2) {
+			dp[i][j + 1] = max(dp[i - 1][j + 1], dp[i - 1][j] - prices[i]);
+			dp[i][j + 2] = max(dp[i - 1][j + 2], dp[i - 1][j + 1] + prices[i]);
+		}
+		return dp[prices.size() - 1][2 * k];
+	}
+};
+
+//123. 买卖股票的最佳时机 III
+class Solution {
+public:
+	int maxProfit(vector<int>& prices) {
+		if (prices.size() == 0) return 0;
+		vector<vector<int>> dp(prices.size(), vector<int>(5, 0));
+		dp[0][1] = -prices[0];
+		dp[0][3] = -prices[0];
+		for (int i = 1; i < prices.size(); ++i) {
+			dp[i][0] = dp[i - 1][0];
+			dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+			dp[i][2] = max(dp[i - 1][2], dp[i - 1][1] + prices[i]);
+			dp[i][3] = max(dp[i - 1][3], dp[i - 1][2] - prices[i]);
+			dp[i][4] = max(dp[i - 1][4], dp[i - 1][3] + prices[i]);
+		}
+		return dp[prices.size() - 1][4];
+	}
+};
+
+//337. 打家劫舍 III
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+public:
+	int rob(TreeNode* root) {
+		vector<int> res = robTree(root);
+		return max(res[0], res[1]);
+	}
+
+	vector<int> robTree(TreeNode* root) {
+		if (root == nullptr) return{ 0, 0 };
+		vector<int> left = robTree(root->left);
+		vector<int> right = robTree(root->right);
+
+		int val1 = root->val + left[0] + right[0]; //偷当前节点不偷孩子节点
+		int val2 = max(left[0], left[1]) + max(right[0], right[1]); //偷孩子节点不偷当前节点
+
+		return{ val2, val1 };
+	}
+};
+
+//LCP 06. 拿硬币
+class Solution {
+public:
+	int minCount(vector<int>& coins) {
+		int sum = 0;
+		for (int i = 0; i < coins.size(); ++i) {
+			if (coins[i] % 2 == 1) sum += coins[i] / 2 + 1;
+			else sum += coins[i] / 2;
+		}
+		return sum;
+	}
+};
+
+//139. 单词拆分
+class Solution {
+public:
+	bool wordBreak(string s, vector<string>& wordDict) {
+		unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+		vector<bool> dp(s.size() + 1, false);
+		dp[0] = true;
+		for (int i = 1; i <= s.size(); ++i) {
+			for (int j = i - 1; j >= 0; --j) {
+				string word = s.substr(j, i - j);
+				if (wordSet.find(word) != wordSet.end() && dp[j]) {
+					dp[i] = true;
+					break;
+				}
+				//break;
+			}
+		}
+		return dp[s.size()];
+	}
+};
+
+//153. 寻找旋转排序数组中的最小值
+class Solution {
+public:
+	int findMin(vector<int>& nums) {
+		int left = 0, right = nums.size() - 1;
+		while (left < right) {
+			int mid = (right - left) / 2 + left;
+			if (nums[mid] < nums[right]) right = mid;
+			else left = mid + 1;
+		}
+		return nums[left];
+	}
+};
+
 //2021_4_7
 
 //class Solution {

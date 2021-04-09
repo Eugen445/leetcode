@@ -1,6 +1,187 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_9
+
+//118. 杨辉三角
+class Solution {
+public:
+	vector<vector<int>> generate(int numRows) {
+		vector<vector<int>> yanghui(numRows);
+		for (int i = 0; i < numRows; ++i) {
+			yanghui[i].resize(i + 1);
+			yanghui[i][0] = yanghui[i][i] = 1;
+			for (int j = 1; j < i; ++j)
+				yanghui[i][j] = yanghui[i - 1][j] + yanghui[i - 1][j - 1];
+		}
+		return yanghui;
+	}
+};
+
+
+//260. 只出现一次的数字 III
+class Solution {
+public:
+	vector<int> singleNumber(vector<int>& nums) {
+
+		int res = 0;
+		for (int i : nums)
+			res ^= i;
+		int div = 1;
+		while ((div & res) == 0)
+			div <<= 1;
+
+		int a = 0, b = 0;
+		for (int i : nums) {
+			if (div & i) a ^= i;
+			else b ^= i;
+		}
+		return vector<int> {a, b};
+	}
+};
+
+//137. 只出现一次的数字 II
+class Solution {
+public:
+	int singleNumber(vector<int>& nums) {
+		int res = 0;
+		for (int i = 0; i < 32; ++i) {
+			int count = 0;
+			for (auto x : nums)
+				count += (x >> i) & 1;
+			res |= (count % 3) << i;
+		}
+		return res;
+	}
+};
+
+//剑指 Offer 39. 数组中出现次数超过一半的数字
+class Solution {
+public:
+	int majorityElement(vector<int>& nums) {
+		unordered_map <int, int> mp;
+		for (auto n : nums)
+		if (++mp[n] > nums.size() / 2) return n;
+		return -1;
+	}
+};
+class Solution {
+public:
+	int majorityElement(vector<int>& nums) {
+		int x = 0, votes = 0;
+		for (int num : nums) {
+			if (votes == 0) x = num;
+			votes += x == num ? 1 : -1;
+		}
+		return x;
+	}
+};
+class Solution {
+public:
+	int majorityElement(vector<int>& nums) {
+		sort(nums.begin(), nums.end());
+		return nums[nums.size() / 2];
+	}
+};
+
+//392. 判断子序列
+class Solution {
+public:
+	bool isSubsequence(string s, string t) {
+		vector<vector<int>> dp(s.size() + 1, vector<int>(t.size() + 1, 0));
+		for (int i = 1; i <= s.size(); ++i) {
+			for (int j = 1; j <= t.size(); ++j) {
+				if (s[i - 1] == t[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+				else dp[i][j] = dp[i][j - 1];
+			}
+		}
+		return dp[s.size()][t.size()] == s.size();
+	}
+};
+
+//53. 最大子序和
+class Solution {
+public:
+	int maxSubArray(vector<int>& nums) {
+		vector<int> dp(nums.size(), 0);
+		dp[0] = nums[0];
+		int res = dp[0];
+		for (int i = 1; i < nums.size(); ++i) {
+			dp[i] = max(dp[i - 1] + nums[i], nums[i]);
+			if (res < dp[i]) res = dp[i];
+		}
+		return res;
+	}
+};
+
+//1035. 不相交的线
+class Solution {
+public:
+	int maxUncrossedLines(vector<int>& A, vector<int>& B) {
+		vector<vector<int>> dp(A.size() + 1, vector<int>(B.size() + 1, 0));
+		for (int i = 1; i <= A.size(); i++) {
+			for (int j = 1; j <= B.size(); j++) {
+				if (A[i - 1] == B[j - 1]) {
+					dp[i][j] = dp[i - 1][j - 1] + 1;
+				}
+				else {
+					dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+				}
+			}
+		}
+		return dp[A.size()][B.size()];
+	}
+};
+
+//1143. 最长公共子序列
+class Solution {
+public:
+	int longestCommonSubsequence(string text1, string text2) {
+		vector<vector<int>> dp(text1.size() + 1, vector<int>(text2.size() + 1, 0));
+		for (int i = 1; i <= text1.size(); ++i) {
+			for (int j = 1; j <= text2.size(); ++j){
+				if (text1[i - 1] == text2[j - 1])
+					dp[i][j] = dp[i - 1][j - 1] + 1;
+				else dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+			}
+		}
+		return dp[text1.size()][text2.size()];
+	}
+};
+
+//718. 最长重复子数组
+class Solution {
+public:
+	int findLength(vector<int>& A, vector<int>& B) {
+		vector<vector<int>> dp(A.size() + 1, vector<int>(B.size() + 1, 0));
+		int res = 0;
+		for (int i = 1; i <= A.size(); ++i) {
+			for (int j = 1; j <= B.size(); ++j) {
+				if (A[i - 1] == B[j - 1]) {
+					dp[i][j] = dp[i - 1][j - 1] + 1;
+				}
+				if (dp[i][j] > res) res = dp[i][j];
+			}
+		}
+		return res;
+	}
+};
+
+//154. 寻找旋转排序数组中的最小值 II
+class Solution {
+public:
+	int findMin(vector<int>& nums) {
+		int left = 0, right = nums.size() - 1;
+		while (left < right) {
+			int mid = (right - left) / 2 + left;
+			if (nums[mid] < nums[right]) right = mid;
+			else if (nums[mid] > nums[right]) left = mid + 1;
+			else right--;
+		}
+		return nums[left];
+	}
+};
+
 //2021_4_8
 
 //674. 最长连续递增序列

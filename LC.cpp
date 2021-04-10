@@ -1,6 +1,93 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_10
+
+//563. 二叉树的坡度
+
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+class Solution {
+private:
+	int helper(TreeNode* root, int &tilt) {
+		if (root == nullptr) return 0;
+		int leftnums = helper(root->left, tilt);
+		int rightnums = helper(root->right, tilt);
+		tilt += abs(leftnums - rightnums);
+		return root->val + leftnums + rightnums;
+	}
+public:
+	int findTilt(TreeNode* root) {
+		int tilt = 0;
+		helper(root, tilt);
+		return tilt;
+	}
+};
+
+//313. 超级丑数
+class Solution {
+public:
+	int nthSuperUglyNumber(int n, vector<int>& primes) {//配合丑数2的官方动态规划看
+		int k = primes.size();
+		vector<int> plist(k, 0);
+		vector<int> nums(1, 1);
+		for (int i = 1; i <n; ++i) {
+
+			int m = INT_MAX;
+			for (int i = 0; i < k; ++i)
+				m = min(m, primes[i] * nums[plist[i]]);
+
+			nums.push_back(m);
+
+			for (int i = 0; i < k; ++i)
+			if (primes[i] * nums[plist[i]] == m)
+				plist[i]++;
+		}
+		return nums[n - 1];
+	}
+};
+
+//264. 丑数 II
+class Solution {
+public:
+	int nthUglyNumber(int n) {
+		vector<int> dp(n + 1);
+		dp[1] = 1;
+		int p2 = 1, p3 = 1, p5 = 1;
+		for (int i = 2; i <= n; ++i) {
+			int num2 = dp[p2] * 2, num3 = dp[p3] * 3, num5 = dp[p5] * 5;
+			dp[i] = min(min(num2, num3), num5);
+			if (dp[i] == num2)  p2++;
+			if (dp[i] == num3)  p3++;
+			if (dp[i] == num5)  p5++;
+		}
+		return dp[n];
+	}
+};
+
+//263. 丑数
+class Solution {
+public:
+	bool isUgly(int n) {
+		if (n <= 0) return false;
+		vector<int> ugly{ 2, 3, 5 };
+		for (int i : ugly) {
+			while (n % i == 0)
+				n /= i;
+		}
+		return n == 1 ? true : false;
+	}
+};
+
 //2021_4_9
 
 //118. 杨辉三角

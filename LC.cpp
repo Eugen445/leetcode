@@ -1,6 +1,42 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_11
+
+//34. 在排序数组中查找元素的第一个和最后一个位置
+class Solution {
+private:
+	int firstsearch(vector<int>& nums, int target) {
+		int left = 0, right = nums.size() - 1;
+		while (left < right) {
+			int mid = (right - left) / 2 + left;
+			if (nums[mid] < target) left = mid + 1;
+			else right = mid;
+		}
+		if (nums[left] == target) return left;
+		return -1;
+	}
+	int lastsearch(vector<int>& nums, int target) {
+		int left = 0, right = nums.size() - 1;
+		while (left < right) {
+			int mid = (right - left + 1) / 2 + left;
+			if (nums[mid] > target) right = mid - 1;
+			else left = mid;
+		}
+		if (nums[left] == target) return right; //left和right都一样
+		return -1;
+	}
+public:
+	vector<int> searchRange(vector<int>& nums, int target) {
+		if (nums.size() == 0) return vector<int> {-1, -1};
+		int left = firstsearch(nums, target);
+		if (left == -1) return vector<int> {-1, -1};
+		int right = lastsearch(nums, target);
+		if (left == right) return vector<int> {left, left};
+		return vector<int> {left, right};
+	}
+};
+
 //2021_4_10
 
 //563. 二叉树的坡度

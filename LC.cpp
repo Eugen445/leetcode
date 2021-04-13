@@ -1,6 +1,65 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_13
+//783. 二叉搜索树节点最小距离
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+* };
+*/
+
+class Solution {
+private:
+	void sortTree(TreeNode* root) {
+		if (root == nullptr) return;
+		sortTree(root->left);
+		res.push_back(root->val);
+		sortTree(root->right);
+	}
+public:
+	vector<int> res;
+	int minDiffInBST(TreeNode* root) {
+		res.clear();
+		sortTree(root);
+		int minValue = INT_MAX;
+		for (int i = 1; i < res.size(); ++i) {
+			minValue = min(abs(res[i] - res[i - 1]), minValue);
+		}
+		return minValue;
+		;
+	}
+};
+class Solution {
+public:
+	int minDiffInBST(TreeNode* root) {
+		stack<TreeNode*> st;
+		TreeNode* cur = root;
+		TreeNode* pre = NULL;
+		int res = INT_MAX;
+
+		while (cur != nullptr || !st.empty()) {
+			if (cur != nullptr) {
+				st.push(cur);
+				cur = cur->left;
+			}
+			else {
+				cur = st.top(); st.pop();
+				if (pre != nullptr) res = min(cur->val - pre->val, res);
+				pre = cur;
+				cur = cur->right;
+			}
+		}
+		return res;
+	}
+};
+
 //2021_4_12
 //179. 最大数
 class Solution {

@@ -1,6 +1,28 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_15
+//213. 打家劫舍 II
+class Solution {
+public:
+	int rob(vector<int>& nums) {
+		if (nums.size() == 1) return nums[0];
+		int one = rob(nums, 0, nums.size() - 2);
+		int two = rob(nums, 1, nums.size() - 1);
+		return max(one, two);
+	}
+	int rob(vector<int>& nums, int start, int end) {
+		if (start == end) return nums[start];
+		vector<int> dp(nums.size());
+		dp[start] = nums[start];
+		dp[start + 1] = max(nums[start], nums[start + 1]);
+		for (int i = start + 2; i <= end; ++i) {
+			dp[i] = max(dp[i - 1], dp[i - 2] + nums[i]);
+		}
+		return dp[end];
+	}
+};
+
 //2021_4_14
 //208. 实现 Trie(前缀树)
 class Trie {

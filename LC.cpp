@@ -1,6 +1,67 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_17
+//220. 存在重复元素 III
+class Solution {
+public:
+	bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+		int n = nums.size();
+		set<int> rec;
+		for (int i = 0; i < n; i++) {
+			auto iter = rec.lower_bound(max(nums[i], INT_MIN + t) - t);
+			if (iter != rec.end() && *iter <= min(nums[i], INT_MAX - t) + t) {
+				return true;
+			}
+			rec.insert(nums[i]);
+			if (i >= k) {
+				rec.erase(nums[i - k]);
+			}
+		}
+		return false;
+	}
+};
+
+//606. 根据二叉树创建字符串
+/**
+* Definition for a binary tree node.
+* struct TreeNode {
+*     int val;
+*     TreeNode *left;
+*     TreeNode *right;
+*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+* };
+*/
+class Solution {
+protected:
+	void preOrder(TreeNode* root, string& str)
+	{
+		if (root == nullptr) return;
+		str += to_string(root->val);
+		if (root->left || root->right) {
+			str += "(";
+			//左子树加括号的条件
+			//1.左子树不空
+			//2.左子树为空但右子树不空
+			preOrder(root->left, str);
+			str += ")";
+		}
+		//右子树加括号的条件
+		//右子树不空
+		if (root->right) {
+			str += "(";
+			preOrder(root->right, str);
+			str += ")";
+		}
+	}
+public:
+	string tree2str(TreeNode* t) {
+		string res = "";
+		preOrder(t, res);
+		return res;
+	}
+};
+
 //2021_4_16
 //87. 扰乱字符串
 class Solution {

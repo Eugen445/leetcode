@@ -1,6 +1,33 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_18
+//692. 前K个高频单词
+class Solution {
+public:
+	vector<string> topKFrequent(vector<string>& words, int k) {
+		map<string, int> conutMap;
+		for (auto e : words) {
+			conutMap[e]++;
+		}
+
+		multimap<int, string, greater<int>> sortMap;
+		for (auto e : conutMap) {
+			sortMap.insert(make_pair(e.second, e.first));
+		}
+
+		vector<string> res;
+		auto it = sortMap.begin();
+		while (it != sortMap.end()) {
+			if (k == 0) break;
+			res.push_back(it->second);
+			++it;
+			--k;
+		}
+		return res;
+	}
+};
+
 //2021_4_17
 //220. 存在重复元素 III
 class Solution {

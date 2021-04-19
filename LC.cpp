@@ -1,6 +1,102 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_19
+//771. 宝石与石头
+class Solution {
+public:
+	int numJewelsInStones(string jewels, string stones) {
+		int count = 0;
+		for (int i = 0; i < jewels.size(); ++i)
+		for (int j = 0; j < stones.size(); ++j)
+		if (jewels[i] == stones[j])
+			count++;
+		return count;
+	}
+};
+
+//1480. 一维数组的动态和
+class Solution {
+public:
+	vector<int> runningSum(vector<int>& nums) {
+		int sum = 0;
+		vector<int> res;
+		for (int i = 0; i < nums.size(); ++i) {
+			sum += nums[i];
+			res.push_back(sum);
+		}
+		return res;
+	}
+};
+//1832. 判断句子是否为全字母句
+class Solution {
+public:
+	bool checkIfPangram(string sentence) {
+		//char surface[26];//越界
+		//int surface[26];//没有初始化
+		int surface[26] = { 0 };
+		for (int i = 0; i < sentence.size(); ++i) {
+			surface[sentence[i] - 'a']++;
+		}
+		for (int i = 0; i < 26; ++i) {
+			if (surface[i] == 0) return false;
+		}
+		return true;
+	}
+};
+
+//LCP 01. 猜数字
+class Solution {
+public:
+	int game(vector<int>& guess, vector<int>& answer) {
+		int count = 0;
+		for (int i = 0; i < guess.size(); ++i) {
+			if (guess[i] == answer[i]) count++;
+		}
+		return count;
+	}
+};
+
+//589. N 叉树的前序遍历
+/*
+// Definition for a Node.
+class Node {
+public:
+int val;
+vector<Node*> children;
+
+Node() {}
+
+Node(int _val) {
+val = _val;
+}
+
+Node(int _val, vector<Node*> _children) {
+val = _val;
+children = _children;
+}
+};
+*/
+
+class Solution {
+public:
+	vector<int> preorder(Node* root) {
+		vector<int> res;
+		stack<Node*> st;
+		//st.push(root); //不能这样洗
+		if (root != nullptr) st.push(root);
+
+		while (!st.empty()) {
+			Node* cur = st.top(); st.pop();
+			res.push_back(cur->val);
+			for (int i = cur->children.size() - 1; i >= 0; --i) {
+				st.push(cur->children[i]);
+			}
+		}
+		return res;
+	}
+};
+
 //2021_4_18
 //692. 前K个高频单词
 class Solution {

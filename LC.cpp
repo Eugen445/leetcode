@@ -1,6 +1,18 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_20
+//461. 汉明距离
+class Solution {
+public:
+	int hammingDistance(int x, int y) {
+		int res = x ^ y;
+		while (res) {
+			if (res % 2 == )
+		}
+	}
+};
+
 //2021_4_19
 //771. 宝石与石头
 class Solution {

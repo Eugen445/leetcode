@@ -1,6 +1,22 @@
 #include<iostream>
 using namespace std;
 
+//2021_4_30
+//137. 只出现一次的数字 II
+class Solution {
+public:
+	int singleNumber(vector<int>& nums) {
+		int res = 0;
+		for (int i = 0; i < 32; ++i) {
+			int count = 0;
+			for (auto x : nums)
+				count += (x >> i) & 1;
+			res |= (count % 3) << i;
+		}
+		return res;
+	}
+};
+
 //2021_4_29
 //403. 青蛙过河
 class Solution {

@@ -1,6 +1,20 @@
 #include<iostream>
 using namespace std;
 
+//2021_5_3
+//7. 整数反转
+int reverse(int x){
+	long long res = 0;
+	while (x) {
+		res = res * 10 + x % 10;
+		x /= 10;
+	}
+	if (res < -pow(2, 31) || res > pow(2, 31) - 1) {
+		return 0;
+	}
+	return res;
+}
+
 //2021_4_30
 //137. 只出现一次的数字 II
 class Solution {

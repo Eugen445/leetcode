@@ -1,6 +1,95 @@
 #include<iostream>
 using namespace std;
 
+//2021_5_6
+//707. 设计链表
+class MyLinkedList {
+public:
+	/** Initialize your data structure here. */
+	struct listNode{
+		int val;
+		listNode *next;
+		listNode(int val) :val(val), next(nullptr) {}
+	};
+	MyLinkedList() {
+		dummyHead = new listNode(0);
+		size = 0;
+	}
+
+	/** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
+	int get(int index) {
+		if (index < 0 || index >= size) {
+			return -1;
+		}
+		listNode *cur = dummyHead->next;
+		while (index--) {
+			cur = cur->next;
+		}
+		return cur->val;
+	}
+
+	/** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
+	void addAtHead(int val) {
+		listNode *newNode = new listNode(val);
+		newNode->next = dummyHead->next;
+		dummyHead->next = newNode;
+		++size;
+	}
+
+	/** Append a node of value val to the last element of the linked list. */
+	void addAtTail(int val) {
+		listNode *cur = dummyHead;
+		while (cur->next != nullptr) {
+			cur = cur->next;
+		}
+		cur->next = new listNode(val);
+		++size;
+	}
+
+	/** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
+	void addAtIndex(int index, int val) {
+		if (index > size) {
+			return;
+		}
+		listNode *cur = dummyHead;
+		listNode *newNode = new listNode(val);
+		while (index--) {
+			cur = cur->next;
+		}
+		newNode->next = cur->next;
+		cur->next = newNode;
+		++size;
+	}
+
+	/** Delete the index-th node in the linked list, if the index is valid. */
+	void deleteAtIndex(int index) {
+		if (index < 0 || index >= size) {
+			return;
+		}
+		listNode *cur = dummyHead;
+		while (index--) {
+			cur = cur->next;
+		}
+		listNode *tmp = cur->next;
+		cur->next = cur->next->next;
+		delete tmp;
+		--size;
+	}
+private:
+	listNode *dummyHead;
+	size_t size;
+};
+
+/**
+* Your MyLinkedList object will be instantiated and called as such:
+* MyLinkedList* obj = new MyLinkedList();
+* int param_1 = obj->get(index);
+* obj->addAtHead(val);
+* obj->addAtTail(val);
+* obj->addAtIndex(index,val);
+* obj->deleteAtIndex(index);
+*/
+
 //2021_5_3
 //7. 整数反转
 int reverse(int x){

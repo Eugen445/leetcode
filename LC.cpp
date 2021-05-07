@@ -1,5 +1,21 @@
 #include<iostream>
 using namespace std;
+//2021_5_7
+//1486. 数组异或操作
+class Solution {
+public:
+	int xorOperation(int n, int start) {
+		vector<int> nums(n);
+		for (int i = 0; i < n; ++i) {
+			nums[i] = start + 2 * i;
+		}
+		int res = 0;
+		for (int i = 0; i < n; ++i) {
+			res ^= nums[i];
+		}
+		return res;
+	}
+};
 
 //2021_5_6
 //707. 设计链表

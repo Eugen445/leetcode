@@ -1,5 +1,28 @@
 #include<iostream>
 using namespace std;
+//2021_5_9
+//454. 四数相加 II
+class Solution {
+public:
+	int fourSumCount(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3, vector<int>& nums4) {
+		unordered_map<int, int> umap;
+		for (int s1 : nums1) {
+			for (int s2 : nums2) {
+				umap[s1 + s2]++;
+			}
+		}
+		int count = 0;
+		for (int s3 : nums3) {
+			for (int s4 : nums4) {
+				if (umap.find(0 - (s3 + s4)) != umap.end()) {
+					count += umap[0 - (s3 + s4)];
+				}
+			}
+		}
+		return count;
+	}
+};
+
 //2021_5_7
 //1486. 数组异或操作
 class Solution {

@@ -1,5 +1,137 @@
 #include<iostream>
 using namespace std;
+
+//2021_5_10
+//202. 快乐数
+class Solution {
+public:
+	int get_nums(int n) {
+		int sum = 0;
+		while (n) {
+			sum += (n % 10) * (n % 10);
+			n /= 10;
+		}
+		return sum;
+	}
+	bool isHappy(int n) {
+		unordered_set<int> table;
+		while (1) {
+			int sum = get_nums(n);
+			if (sum == 1) {
+				return true;
+			}
+			if (table.find(sum) != table.end()) {
+				return false;
+			}
+			else {
+				table.insert(sum);
+				n = sum;
+			}
+		}
+		return{};
+	}
+};
+//剑指 Offer 05. 替换空格
+class Solution {
+public:
+	string replaceSpace(string s) {
+		int count = 0;
+		int oldSize = s.size();
+		for (int i = 0; i < s.size(); ++i) {
+			if (s[i] == ' ') count++;
+		}
+		s.resize(oldSize + 2 * count);
+		int pos = s.size() - 1;
+		for (int i = oldSize - 1; i >= 0;) {
+			if (s[i] != ' ') {
+				s[pos--] = s[i--];
+			}
+			else {
+				s[pos--] = '0';
+				s[pos--] = '2';
+				s[pos--] = '%';
+				i--;
+			}
+		}
+		return s;
+	}
+};
+//15. 三数之和
+class Solution {
+public:
+	vector<vector<int>> threeSum(vector<int>& nums) {
+		vector<vector<int>> res;
+		sort(nums.begin(), nums.end());
+		for (int i = 0; i < nums.size(); ++i) {
+			if (nums[i] > 0) return res;
+			if (i > 0 && nums[i] == nums[i - 1]) continue;
+			int left = i + 1;
+			int right = nums.size() - 1;
+			while (right > left) {
+				if (nums[i] + nums[left] + nums[right] > 0) right--;
+				else if (nums[i] + nums[left] + nums[right] < 0) left++;
+				else {
+					res.push_back(vector<int>{nums[i], nums[left], nums[right]});
+					while (right > left && nums[right] == nums[right - 1]) right--;
+					while (right > left && nums[left] == nums[left + 1]) left++;
+					right--;
+					left++;
+				}
+			}
+		}
+		return res;
+	}
+};
+//151. 翻转字符串里的单词
+class Solution {
+public:
+	void reverse(string&s, int begin, int end) {
+		while (end > begin) {
+			swap(s[end], s[begin]);
+			begin++, end--;
+		}
+	}
+	void removeExtraSpace(string& s) {
+		int slowIndex = 0, fastIndex = 0;
+		while (fastIndex < s.size() && s[fastIndex] == ' ') fastIndex++;
+		for (; fastIndex < s.size();) {
+			if (fastIndex - 1 > 0 && s[fastIndex] == s[fastIndex - 1] && s[fastIndex] == ' ') fastIndex++;
+			else {
+				s[slowIndex++] = s[fastIndex++];
+			}
+		}
+		if (s[slowIndex - 1] == ' ') {
+			s.resize(slowIndex - 1);
+		}
+		else {
+			s.resize(slowIndex);
+		}
+	}
+	string reverseWords(string s) {
+		reverse(s, 0, s.size() - 1);
+		removeExtraSpace(s);
+		int start = 0;
+		int end = 0;
+		bool entry = false;
+		for (int i = 0; i < s.size(); ++i) {
+			if ((!entry) || s[i] != ' ' && s[i - 1] == ' ') {
+				start = i;
+				entry = true;
+			}
+			if (entry && s[i] == ' ' && s[i - 1] != ' ') {
+				end = i - 1;
+				entry = false;
+				reverse(s, start, end);
+			}
+			if (entry && i == s.size() - 1) {
+				end = i;
+				entry = false;
+				reverse(s, start, end);
+			}
+		}
+		return s;
+	}
+};
 //2021_5_9
 //454. 四数相加 II
 class Solution {

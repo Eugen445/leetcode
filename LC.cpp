@@ -1,6 +1,45 @@
 #include<iostream>
 using namespace std;
 
+//2021_5_11
+//剑指 Offer 59 - I. 滑动窗口的最大值
+class Solution {
+public:
+	class myQueue{
+	public:
+		deque<int> que;
+		void push(int val) {
+			while (!que.empty() && val > que.back()) {
+				que.pop_back();
+			}
+			que.push_back(val);
+		}
+		void pop(int val) {
+			if (!que.empty() && val == que.front()) {
+				que.pop_front();
+			}
+		}
+		int front() {
+			return que.front();
+		}
+	};
+	vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+		myQueue que;
+		vector<int> res;
+		if (nums.size() == 0) return res;
+		for (int i = 0; i < k; ++i) {
+			que.push(nums[i]);
+		}
+		res.push_back(que.front());
+		for (int i = k; i < nums.size(); ++i) {
+			que.pop(nums[i - k]);
+			que.push(nums[i]);
+			res.push_back(que.front());
+		}
+		return res;
+	}
+};
+
 //2021_5_10
 //202. 快乐数
 class Solution {

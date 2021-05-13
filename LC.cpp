@@ -1,6 +1,27 @@
 #include<iostream>
 using namespace std;
 
+//2021_5_13
+//376. 摆动序列
+class Solution {
+public:
+	int wiggleMaxLength(vector<int>& nums) {
+		int preDiff = 0;
+		int curDiff = 0;
+		int result = 1;
+		for (int i = 1; i < nums.size(); ++i) {
+			curDiff = nums[i] - nums[i - 1];
+			if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {
+				//=0只在第一次判定时有可能有用,因为curDiff在接下来，必须满足!=0才会进入if判断,
+				//preDiff只有在第一次初始的时候才会有0的出现，0的判定是为了解决[2,5]这种情况,preDiff的作用就是把[2,5]看成[2,2,5]
+				preDiff = curDiff;
+				++result;
+			}
+		}
+		return result;
+	}
+};
+
 //2021_5_12
 //76. 最小覆盖子串
 class Solution {

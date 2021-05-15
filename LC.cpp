@@ -1,6 +1,76 @@
 #include<iostream>
 using namespace std;
 
+//2021_5_15
+//134. 加油站
+class Solution {
+public:
+	int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+		int curSum = 0;
+		int totalSum = 0;
+		int start = 0;
+		for (int i = 0; i < gas.size(); ++i) {
+			curSum += gas[i] - cost[i];
+			totalSum += gas[i] - cost[i];
+			if (curSum < 0) {
+				start = i + 1;
+				curSum = 0;
+			}
+		}
+		if (totalSum < 0) return -1;
+		return start;
+	}
+};
+//1005. K 次取反后最大化的数组和
+class Solution {
+public:
+	static bool cmp(int a, int b) {
+		return abs(a) > abs(b);
+	}
+	int largestSumAfterKNegations(vector<int>& nums, int k) {
+		sort(nums.begin(), nums.end(), cmp);
+		for (int i = 0; i < nums.size(); ++i) {
+			if (nums[i] < 0 && k > 0) {
+				nums[i] *= -1;
+				k--;
+			}
+		}
+		while (k--) nums[nums.size() - 1] *= -1;
+		int sum = 0;
+		for (int i : nums) sum += i;
+		return sum;
+	}
+};
+//13. 罗马数字转整数
+class Solution {
+private:
+	unordered_map<char, int> symbolValues = {
+		{ 'I', 1 },
+		{ 'V', 5 },
+		{ 'X', 10 },
+		{ 'L', 50 },
+		{ 'C', 100 },
+		{ 'D', 500 },
+		{ 'M', 1000 },
+	};
+
+public:
+	int romanToInt(string s) {
+		int ans = 0;
+		int n = s.length();
+		for (int i = 0; i < n; ++i) {
+			int value = symbolValues[s[i]];
+			if (i < n - 1 && value < symbolValues[s[i + 1]]) {
+				ans -= value;
+			}
+			else {
+				ans += value;
+			}
+		}
+		return ans;
+	}
+};
+
 //2021_5_14
 //12. 整数转罗马数字
 class Solution {
